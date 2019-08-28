@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>欢迎访问 国家电网公司招投标平台</title>
+  <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司" />
+  <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部" />
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" href="../../static/css/element_ui.css">
+  <link rel="stylesheet" href="../../static/css/common.css">
+
+</head>
+<style>
+  .table-box {
+    padding: 20px 20px 100px;
+    color: #666;
+    max-width: 900px;
+    background: #fff;
+  }
+
+  .publicity-title {
+    text-align: center;
+    color: #666;
+    font-size: 18px;
+    min-height: 24px
+  }
+
+  .publicity-divider {
+    text-align: right;
+    color: #969696;
+    font-size: 12px;
+    height: 28px;
+    line-height: 28px
+  }
+
+  .publicity-date {
+    border-top: 1px dashed #A2A2A2;
+    text-align: center;
+    color: #999999;
+    font-size: 12px;
+    line-height: 28px;
+  }
+
+  .publicity-content {
+    padding: 14px;
+    color: #666;
+    font-size: 13px;
+    min-height: 400px;
+  }
+
+  .publicity-text {
+    min-height: 50px;
+    text-indent: 2em;
+    padding-bottom: 14px
+  }
+
+  .publicity-text.last {
+    margin-top: 20px
+  }
+
+  .table-border {
+    border: 1px solid #e4e4e4;
+    font-size: 13px;
+    text-align: center
+  }
+
+  .table-border tr:nth-child(1) {
+    background: #EDFFFA
+  }
+
+  .table-border th {
+    padding: 8px 0
+  }
+
+  .table-border td {
+    padding: 10px 0
+  }
+
+  .accessory-box {
+    padding-left: 46px;
+    position: relative;
+    line-height: 28px;
+    font-size: 14px;
+    margin-bottom: 30px
+  }
+
+  .accessory-title {
+    position: absolute;
+    left: 0
+  }
+
+  .signature-name,
+  .signature-date {
+    float: right;
+    line-height: 36px;
+    text-align: center;
+  }
+
+  .publicity-content ul li:first-child {
+    float: left;
+    width: 150px;
+    text-align: right;
+    line-height: 30px
+  }
+
+  .publicity-content ul li:nth-child(2) {
+    float: left;
+    padding-left: 14px;
+    line-height: 30px;
+    color: #444;
+    max-width: 83%;
+  }
+
+  ul.submit-btn {
+    padding-left: 336px;
+    line-height: 66px;
+    height: 66px;
+    width: 100%;
+    background: #fff;
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    border-top: 1px solid #e4e4e4;
+    z-index: 10
+  }
+</style>
+
+<body>
+  <div id="wrapper">
+    <div class="content-page">
+      <div class="table-box" v-cloak>
+        <div class="publicity-title">{{details_notice.projectName}}</div>
+        <div class="publicity-divider">
+          <!--<div class="publicity-serial">项目编号：{{details_notice.projectName}}{{details_notice.projectType}}</div>-->
+          <div class="publicity-date">{{details_notice.issueTime}}</div>
+        </div>
+        <div class="publicity-content">
+          <ul class="clearfix">
+            <li>项目状态：</li>
+            <li>{{details_notice.purchaseStatus | projectStatus }}</li>
+          </ul>
+          <ul class="clearfix">
+            <li>项目编码：</li>
+            <li>{{details_notice.projectCode}}</li>
+          </ul>
+          <ul class="clearfix">
+            <li>项目名称：</li>
+            <li>{{details_notice.projectName}}</li>
+          </ul>
+          <ul class="clearfix">
+            <li>截标时间：</li>
+            <li>{{details_notice.closBidTime}}</li>
+          </ul>
+          <ul class="clearfix">
+            <li>开标时间：</li>
+            <li>{{details_notice.openBidTime}}</li>
+          </ul>
+          <ul class="clearfix">
+            <li>开标地点：</li>
+            <li>{{details_notice.openBidAddr}}</li>
+          </ul>
+          <ul class="clearfix">
+            <li>变更公告内容：</li>
+            <li>{{details_notice.changeContent}}</li>
+          </ul>
+          <ul class="clearfix">
+            <li>项目公告文件：</li>
+            <li><a href="javascript:;" @click="jump_download_tender()">下载招标公告文件</a>
+            </li>
+          </ul>
+
+        </div>
+        <div class="signature clearfix">
+          <div class="signature-name">{{details_notice.tendereeManagementName}}</div>
+        </div>
+        <div class="signature clearfix">
+          <div class="signature-date">{{details_notice.issueTime}}</div>
+        </div>
+        <ul class="submit-btn" v-if="!reverse">
+          <el-button @click="xadmin.del_tab()" size="medium">返 回</el-button>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+<script src="../../static/vue.min.js" charset="utf-8"></script>
+<script src="../../static/element_ui.js" charset="utf-8"></script>
+<script src="../../static/layui/layui.js" charset="utf-8"></script>
+<script src="../../static/js/xadmin.js" charset="utf-8"></script>
+<script src="../../static/myAjax.js" charset="utf-8"></script>
+<script src="../../static/js/common.js" charset="utf-8"></script>
+<script>
+  var vm = new Vue({
+    //项目状态
+    projectStatus: function (val) {
+      if (val == '1') {
+        return "待发布公告"
+      } else if (val == '2') {
+        return "公告中"
+      } else if (val == '3') {
+        return "公告中,接标中"
+      } else if (val == '4') {
+        return "公告中,接标结束"
+      } else if (val = '5') {
+        return "公告结束,接标中"
+      } else if (val = '6') {
+        return "待开标"
+      } else if (val = '7') {
+        return "开标中"
+      } else if (val = '8') {
+        return "待评标"
+      } else if (val = '9') {
+        return "评标中"
+      } else if (val = '10') {
+        return "待定标"
+      } else if (val = '11') {
+        return "定标中"
+      } else if (val = '12') {
+        return "结束"
+      }
+    },
+    data: {
+      html: '',
+      reverse: false,
+      details_notice: {}
+    },
+    mounted: function () {
+      this.getData(common.getUrlParam("active"), common.getUrlParam("id"))
+    },
+    methods: {
+      getData: function (active, id) {
+        if (active == 1) {
+          suffix = "http://192.168.2.88:8081/check-service/formula/queryIFB?id="
+        } else if (active == 2) {
+          suffix = "http://192.168.2.88:8081/check-service/formula/queryBiddingAnnouncement?id="
+        } else if (active == 3) {
+          suffix = "http://192.168.2.88:8081/check-service/formula/queryAlterationAnnouncement?id="
+        }
+        if (active == 1 || active == 2 || active == 3) {
+          ajax({
+            url: suffix + id,
+            type: "POST",
+            contentType: "application/json;charset=utf-8",
+            success: function (res) {
+              if (res.code == "200") {
+                this.loading = false;
+                if (res.data == null) {
+                  this.$notify({
+                    title: '请求失败',
+                    message: "没有数据",
+                    type: 'error',
+                    position: 'bottom-right'
+                  });
+                  return;
+                }
+                this.details_notice = res.data;
+              } else {
+                this.$notify({
+                  title: '请求失败',
+                  message: res.errmsg,
+                  type: 'error',
+                  position: 'bottom-right'
+                });
+              }
+            }.bind(this)
+          });
+        }
+      },
+      jump_download_tender: function (val) {
+        parent.xadmin.add_tab('申请下载招标文件',
+          '../pinggao_svsp/pages/supplier_service_platform/download_tender_documents.html')
+      },
+      handleSelectionChange: function (val) {
+        console.log(val);
+      },
+      handleCurrentChange: function (val) {
+        // console.log(`当前页: ${val}`);
+      },
+      handleEdit: function () {
+
+      },
+      //接受
+      accept: function () {
+        vm.reverse = true;
+      },
+      handleDelete: function () {
+
+      },
+      handleCheck: function (index, val) {
+        // console.log(val);
+      },
+      handleCheckChange: function (val) {
+        console.log(val);
+      }
+    },
+  }).$mount('#wrapper')
+</script>
+
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <title>PDF预览</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="google" content="notranslate">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script type="text/javascript" src="../../static/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="../../static/UTCMiddleWare.js"></script>
+    <script type="text/javascript" src="../../static/pdfjs/viewer.css"></script>
+    <link rel="resource" type="application/l10n" href="../../static/pdfjs/locale/locale.properties">
+    <script src="../../static/pdfjs/pdfview.js" type="text/javascript"
+            charset="utf-8"></script>
+    <script src="../../static/pdfjs/l10n.js" type="text/javascript"
+            charset="utf-8"></script>
+    <script src="../../static/pdfjs/pdf.js" type="text/javascript"
+            charset="utf-8"></script>
+    <script src="../../static/pdfjs/debugger.js" type="text/javascript"
+            charset="utf-8"></script>
+    <script src="../../static/layui/layui.js" charset="utf-8"></script>
+    <script src="../../static/js/xadmin.js" charset="utf-8"></script>
+    <script src="../../static/myAjax.js" charset="utf-8"></script>
+    <style type="text/css">
+        html, body {
+            height: 100%;
+            margin: 0px;
+        }
+
+        .demobtn {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            color: #FFFFFF;
+            border: none;
+            background-color: #3399FF;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 1;
+        }
+    </style>
+</head>
+<%--
+<body onload="loadPdf('${pdfFilePath}')">--%>
+<body onload="loadPdf()">
+<div class="cont" style=" width: 100%; height: 100%;"></div>
+<button class="demobtn seal" style=" bottom: 20px; left: 20px;" onclick="pdfSeal()">签章</button>
+<button class="demobtn save" style=" bottom: 20px; left: 100px;" onclick="save()">保存</button>
+<%--
+<button class="demobtn resrh" style=" bottom: 20px; left: 100px;">刷新</button>
+--%>
+<script type="text/javascript">
+    //印章摘要信息
+    var sealDigest;
+    //签名后返回路径
+    var signPath;
+    //签章类型
+    var signType = common.getUrlParam("signType");
+    //签章pdf名字
+    var pdfRedisKey = common.getUrlParam("pdfRedisKey");
+    //签章pdfBase64
+    var pdfFileBase64;
+
+    //电子签章
+    function pdfSeal() {
+        //选择印章图片
+        selectSeal();
+        //签章回调方法
+        UTCPdfview.poscallback = function (p, x, y, i) {
+            //生成摘要
+            createDigest(p, x, y, i, sealDigest);
+        };
+    }
+
+
+    //-------加载pdf文件---------
+    function loadPdf() {
+
+        ajax({
+            type: "GET",
+            url: common.url_fanjx + "/sign/toPdfSealView?pdfRedisKey=" + pdfRedisKey,
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                pdfFileBase64 = data.data;
+            }
+        });
+        UTCPdfview.load({
+            path: '../../static/pdfjs/',
+            ele: '.cont',
+            url: pdfFileBase64,
+            percent: true,
+            oper: false
+        });
+        //     }
+        // });
+        //获取印章图片
+        var pictures = new Array();
+        UTCMiddleWare.GetSealInfo({
+            pin: 1234,
+            success: function (data) {
+                var dataArr = data;
+                var dataLen = dataArr.length;
+                for (var i = 0; i < dataLen; i++) {
+                    var sealDigest = dataArr[i].value;
+                    var source = {'value': sealDigest};
+                    jQuery.ajax({
+                        type: "POST",
+                        url:  common.url_fanjx + "/sign/base64DecoderFile",
+                        contentType: "application/json;charset=utf-8",
+                        data: JSON.stringify(source),
+                        dataType: "json",
+                        async: false,
+                        success: function (data) {
+                            var imgSrc = data.data;
+                            var seal = {
+                                id: dataArr[i].id, src: imgSrc, checked: false, base64Coding: dataArr[i].value
+                            }
+                            pictures.push(seal);
+                        }
+                    });
+                }
+                localStorage.removeItem('sealImages');
+                localStorage.setItem("sealImages", JSON.stringify(pictures));
+            }
+        });
+    }
+
+    //------选择印章图片--------
+    function selectSeal() {
+        xadmin.open('选择印章', '../pinggao_svsp/pages/supplier_service_platform/choice_seal.html');
+    }
+
+    //-------------添加签章图片----------------
+    function seal(sealArr) {
+        var img = sealArr[0].src;
+        sealDigest = sealArr[0].base64Coding;
+        UTCPdfview.img = img;
+        UTCPdfview.selectpos();
+    }
+
+    //-------获取PDF摘要-----
+    function createDigest(p, x, y, i, sealDigest) {
+        var pdfSeal = {
+            "pdfRedisKey": pdfRedisKey,
+            "imageByte": sealDigest,
+            "pageNo": p,
+            "x": x,
+            "y": y,
+            "strReason": "",
+            "strLocation": ""
+        };
+        ajax({
+            type: "POST",
+            url: common.url_fanjx + "/sign/pdfDigest",
+            contentType: "application/json;charset=utf-8",
+            data: JSON.stringify(pdfSeal),
+            dataType: "json",
+            success: function (res) {
+                console.log("pdfDigest: " + res.data)
+                if (res.code != 200) {
+                    alert("签章失败，请重试！")
+                    return;
+                }
+                var pdfDigest = res.data;
+                //获取证书信息
+                UTCMiddleWare.GetCertInfo({
+                    success: function (data) {
+                        //签名后返回的文件地址
+                        var certInfo = data[0];
+                        var dn = certInfo.DN;
+                        //-----pdf签章---
+                        pdfSealFile(pdfDigest, dn);
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * 生成pdf签章文件
+     */
+    function pdfSealFile(pdfDigest, dn) {
+        //pdf签章：2.签章数据
+        UTCMiddleWare.GetPdfStdSealDataByKey({
+            hash: pdfDigest,
+            dn: dn,
+            pin: 1234,
+            success: function (data) {
+                var pdfSealData = {"value": data, "fileType": fileType()};
+                ajax({
+                    type: "POST",
+                    url: common.url_fanjx + "/sign/pdfSeal",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(pdfSealData),
+                    dataType: "json",
+                    success: function (data) {
+                        console.log("签章文件信息:", data);
+                        signPath = data.data;
+                    }
+                });
+            }
+        });
+    }
+
+    function fileType() {
+        if (signType == '1') {
+            //提出澄清
+            return "signPdfSupplierClarify"
+        }
+        return "otherFilePath"
+    }
+
+    function save() {
+        if (signPath == null || signPath == '') {
+            alert("请确认是否签章，如果已签章，请重试！");
+        } else {
+            debugger;
+            console.log("signType", signType);
+            //提出澄清
+            if (signType == '1') {
+                window.parent.vm.submitNotice(signPath);
+            }
+            xadmin.close();
+        }
+    }
+
+    // //刷新
+    // document.querySelectorAll('.demobtn.resrh')[0].addEventListener('click', function () {
+    //     UTCPdfview.refresh();
+    // });
+</script>
+</body>
+</html>

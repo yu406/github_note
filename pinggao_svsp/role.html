@@ -1,0 +1,520 @@
+<!doctype html>
+
+
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <title>管理员登录-WeAdmin Frame型后台管理系统-WeAdmin 1.0</title>
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+  <!DOCTYPE html>
+  <html lang="cn">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>欢迎访问 国家电网公司招投标平台</title>
+    <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司" />
+    <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部" />
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+    <link rel="shortcut icon" href="./static/images/logo/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./static/css/font.css">
+    <link rel="stylesheet" href="./static/layui/css/layui.css">
+    <link rel="stylesheet" href="./static/css/element_ui.css">
+    <link rel="stylesheet" href="./static/css/common.css">
+    <script>
+      if (window.top !== window.self) {
+        window.top.location = window.location;
+      }
+    </script>
+  </head>
+  <style>
+    body {
+      background: #16A085;
+      height: 100vh;
+      font-size: 12px
+    }
+
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-weight: normal;
+    }
+
+    .select-system {
+      width: 590px;
+      min-height: 280px;
+      background: #FFFFFF;
+      padding: 10px 20px 14px 20px;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      border-radius: 10px;
+    }
+
+    .select-system-title {
+      color: #008A7A;
+      font-weight: bold;
+      font-size: 15px;
+      height: 48px;
+      line-height: 40px;
+      text-indent: 120px;
+      background: url('./static/images/logo/icon_index_logo-1.png') no-repeat 0px 7PX;
+      background-size: 104px;
+      position: relative;
+      border-bottom: 1px solid #e4e4e4;
+    }
+
+    .select-system-content {
+      min-height: 160px;
+      padding-top: 18px;
+    }
+
+    .select-system-content ul {
+      float: left;
+      margin: 10px 30px 10px 30px;
+      cursor: pointer;
+    }
+
+    .select-system-content ul li:first-child {
+      width: 72px;
+      height: 72px;
+      ;
+      background: #E59154;
+      border-radius: 4px;
+      text-align: center;
+      padding-top: 16px;
+    }
+
+    .select-system-content ul li {
+      font-size: 12px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 30px
+    }
+
+    .get-out-btn {
+      border-top: 1px solid #e4e4e4;
+      height: 48px;
+      line-height: 48px;
+      text-align: right;
+      padding-right: 34px;
+    }
+
+    .get-out-btn a {
+      color: #248471;
+      font-weight: bold;
+    }
+
+    .protocol-box {
+      width: 500px;
+      height: 470px;
+      background: #fff;
+      border-radius: 2px;
+      padding: 0 20px;
+      color: #444;
+      position: relative;
+    }
+
+    .protocol-box-title {
+      height: 42px;
+      line-height: 42px;
+      text-align: center;
+      border-bottom: 1px dashed #90D2CB;
+      font-size: 15px;
+      font-weight: bold;
+      color: #333
+    }
+
+    .protocol-box p:nth-child(2) {
+      margin: 16px 0;
+    }
+
+    .protocol-box p:nth-child(3) {
+      font-weight: bold;
+    }
+
+    .layui-layer .layui-layer-btn {
+      padding: 0 15px 22px;
+    }
+
+    .layui-layer .layui-layer-btn a {
+      height: 32px;
+      line-height: 32px;
+      border-radius: 4px;
+      width: 86px;
+    }
+
+    .layui-layer .layui-layer-btn .layui-layer-btn0 {
+      border-color: #009988;
+      background-color: #009988;
+      color: #fff;
+    }
+
+    .layui-layer-btn .layui-layer-btn1 {
+      border-color: #009988;
+    }
+
+    .change-password-box {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+      width: 500px;
+      min-height: 280px;
+      background: #FFFFFF;
+    }
+
+    .el-form-item {
+      margin-bottom: 12px;
+    }
+
+    .el-form-item:last-child {
+      padding-left: 80px;
+    }
+
+    .el-input {
+      width: 250px
+    }
+
+    .el-button {
+      padding: 8px 26px;
+    }
+
+    .el-form-item__error {
+      padding-top: 0;
+    }
+
+    .dialog-form {
+      margin-top: 30px
+    }
+  </style>
+
+  <body class="login-bg">
+    <div id="wrapper">
+      <div class="select-system" v-if="roleShow">
+        <div class="select-system-title">选择登录系统</div>
+        <div class="select-system-content clearfix">
+          <ul @click="getMenuListByRole(item.roleId)" v-for="item in role" v-cloak>
+            <li><img src="./static/images/icon/doc.png" alt=""></li>
+            <li>{{item.roleName}}</li>
+          </ul>
+        </div>
+        <div class="get-out-btn">
+          <a href="javascript:;" @click="get_out_Login()">安全退出</a>
+        </div>
+      </div>
+      <div class="change-password-box" v-if="!roleShow" v-cloak>
+        <div class="protocol-box">
+          <div class="protocol-box-title">安全设置</div>
+          <el-form :model="changePassword" :rules="rules" ref="changePassword" label-width="130px" class="dialog-form">
+            <el-form-item label="新密码" prop="newpass">
+              <el-input type="Password" v-model="changePassword.newpass"></el-input>
+            </el-form-item>
+            <el-form-item label="确认新密码" prop="newPwdAgain">
+              <el-input type="Password" v-model="changePassword.newPwdAgain"></el-input>
+            </el-form-item>
+            <el-form-item label="密码找回问题1" prop="one">
+              <el-select v-model="changePassword.one" placeholder="请选择">
+                <el-option label="问题一" value="1"></el-option>
+                <el-option label="问题二" value="2"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="答案" prop="two">
+              <el-input v-model="changePassword.two"></el-input>
+            </el-form-item>
+            <el-form-item label="密码找回问题2">
+              <el-select v-model="changePassword.three" placeholder="请选择">
+                <el-option label="问题一" value="1"></el-option>
+                <el-option label="问题二" value="2"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="答案">
+              <el-input v-model="changePassword.four"></el-input>
+            </el-form-item>
+            <el-form-item v-cloak>
+              <el-button type="primary" size="mini" @click="submitForm('changePassword')">确定</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </div>
+    </div>
+    <!-- 底部结束 -->
+  </body>
+  <script type="text/javascript" src="./static/jquery-3.3.1.min.js" />
+  <script type="text/javascript" src="./static/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="./static/vue.min.js" charset="utf-8"></script>
+  <script type="text/javascript" src="./static/element_ui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="./static/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript">
+    layui.use(['form'], function () {
+      layer = layui.layer;
+      layui.data('cate', null);
+      layui.data('tab_list', null);
+    });
+  </script>
+  <script type="text/javascript">
+    var DEADTIME = 500;
+    //ajaxæ¦æªå¨
+    $(document).ajaxSuccess(function (event, xhr, options) {
+      var data = xhr.responseJSON;
+      console.log("--------------------------------------")
+      console.log(data)
+      if (data != undefined) {
+        console.log(data.code)
+        var code = data.code;
+        if (code === 403) {
+          window.top.location = "/pingbiao-manage/login/logout";
+          // if(data.code === "1000"){
+          //     window.location.href= "xxxx.html";
+          // }else{
+          //     alert(data.message);
+          // }
+        } else if (code === 401) {
+          layer.alert("", {
+            icon: 2
+          });
+        }
+      }
+    });
+  </script>
+
+  <script>
+    var validatePass = function (rule, value, callback) {
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      } else {
+        if (value !== '') {
+          vm.$refs.changePassword.validateField('newPwdAgain');
+        }
+        callback();
+      }
+    };
+    var validatePass2 = function (rule, value, callback) {
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== vm.changePassword.newpass) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    };
+    var vm = new Vue({
+      data: {
+        roleShow: false,
+        role: [],
+        id: '',
+        changePassword: {
+          newpass: '',
+          newPwdAgain: '',
+          one: '',
+          two: '',
+          three: '',
+          four: ''
+        },
+        rules: {
+          newpass: [{
+              validator: validatePass,
+              trigger: 'blur'
+            },
+            {
+              pattern: /^(?:(?=.*[a-z])(?=.*[0-9])).{8,16}$/,
+              message: '至少8位混合字母大小写数字'
+            }
+          ],
+          newPwdAgain: [{
+              validator: validatePass2,
+              trigger: 'blur'
+            },
+            {
+              pattern: /^(?:(?=.*[a-z])(?=.*[0-9])).{8,16}$/,
+              message: '至少8位混合字母大小写数字'
+            }
+          ],
+          one: [{
+            required: true,
+            message: '请选择安全问题',
+            trigger: 'change'
+          }],
+          two: [{
+            required: true,
+            message: '请输入答案',
+            trigger: 'blur'
+          }]
+        }
+      },
+      methods: {
+        keypress: function (form0) {
+          if (event.keyCode == 13 || event.keyCode == 42) //回车,*
+          {
+            this.doLogin();
+          }
+        },
+        doLogin: function () {
+          var form = new FormData()
+          form.append("username", this.user.username);
+          form.append("password", this.user.password);
+          jQuery.ajax({
+            type: 'post',
+            url: '/pingbiao-manage/login/doLogin',
+            data: form,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+              //判断是否签过承诺协议书
+              console.log("是否签过承诺协议", res)
+              //0代表不是专家用户,2代表是专家用户并签订协议
+              if (res.data === 0 || res.data === 2) {
+                layer.closeAll()
+                //查询登录用户对应的角色
+                vm.getRole();
+              } else if (res.data === 1) {
+                //1代表是专家用户没有签订协议,让他去签订
+                if (res.message == "SUCCESS") {
+                  layer.open({
+                    type: 1,
+                    title: false, //不显示标题栏
+                    closeBtn: false,
+                    area: '500px;',
+                    shade: 0.4,
+                    id: 'LAY_layuipro', //设定一个id，防止重复弹出
+                    resize: false,
+                    btnAlign: 'c',
+                    moveType: 1, //拖拽模式，0或者1
+                    content: '\
+                                <div class="protocol-box">\
+                                    <div class="protocol-box-title">廉洁保密承诺书</div>\
+                                    <p>我单位系贵单位业务合作商,本着公开、透明、廉洁、自律的原 则,特就在洽谈、考察、供货、承揽、物流、付款、技术合作交流、 结算及具它履行交易合何等业务中接触的贵单位相关人员和资讯,在 诚信、廉洁、保密等义务和操守方面作如下承诺:</p>\
+                                    <p>一、遵守廉洁阳光原则</p>\
+                                    <p>1、承诺我单位参与合同订立和履行的相关人员了解本承诺书 之规定,并遵照执行</p>\
+                                    <p>2、承诺决不为达到交易目的而诱使贵单位人员接受不正当利 益或达成不正当利益的分成。</p>\
+                                    <p>3、承诺不邀请贵单位人员参加带有娱乐性质的宴席。</p>\
+                                    <p>4、承诺和贵单位人员保持正常业务交往,不以任何理由和任 何形式赠送费单位人员实物、现金或礼券。</p>\
+                                    <p>5、承诺不向贵单位人员出借房屋、车辆、现金等资产。</p>\
+                                    <p>6、承诺不以任何形式替贵单位人员报销费用。</p>\
+                                    <p>7、不不接受贵单位人员的亲朋好友参与 备、材料、工程分包、劳务等经济活动。</p>\
+                                    <p>8、承诺不为贵单位人员提供房屋购置与装修、婚丧嫁娶、出国、旅游、亲朋好友学习和工作安排等便利及支援。</p>\
+                                    <p>9、承诺不接受贵单位人员口头强行指定或更换品牌、供应商等个人行为。</p>\
+                                    <p>10、承诺一经发现我单位人员存在涉嫌向贵单位人员行贿之行为,将立即采取措施予以制止,并于3日内通报贵单位。</p>\
+                                  </div>\
+                            ',
+                    btn: ['同意', '退出系统'], //按钮
+                    yes: function (index, layero) {
+                      layer.closeAll()
+                      vm.goLogin()
+                    },
+                    btn2: function (index, layero) {
+                      vm.get_out_Login()
+                      //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                  });
+                } else {
+                  vm.$notify({
+                    title: '错误',
+                    message: res.message,
+                    type: 'error',
+                    position: 'bottom-right'
+                  });
+                }
+              }
+            },
+            error: function () {
+              vm.$notify({
+                title: '错误',
+                message: '登录失败',
+                type: 'error',
+                position: 'bottom-right'
+              });
+            }
+          })
+        },
+        getRole: function () {
+          jQuery.ajax({
+            type: 'get',
+            url: '/pingbiao-manage/userRole/getRole',
+            success: function (result) {
+              console.info(result);
+              vm.role = result.data;
+            }
+          });
+        },
+        getMenuListByRole: function (roleId) {
+          var reqData = {
+            'roleId': roleId
+          };
+          jQuery.ajax({
+            type: 'post',
+            url: '/pingbiao-manage/menu/getMenuListByRole',
+            data: JSON.stringify(reqData),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (res) {
+              if (res.code == 200) {
+                location.href = '/pingbiao-manage/home/toIndex'
+              } else {
+                vm.$notify({
+                  title: '角色选择失败',
+                  message: res.message,
+                  type: 'error',
+                  position: 'bottom-right'
+                });
+              }
+            }
+          });
+        },
+        goLogin: function () {
+          //新增签订协议记录
+          jQuery.ajax({
+            type: "GET",
+            url: "/pingbiao-manage/evaluationCommittee/insertCommitmentAgreement?id=" + vm.id,
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            success: function (res) {
+              console.log("res", res)
+              if (res.code === 200) {
+                console.log("新增签订协议成功")
+                this.getRole();
+              } else {
+                this.$notify({
+                  title: '签订协议失败',
+                  message: '签订协议失败',
+                  type: 'error',
+                  position: 'bottom-right'
+                });
+                location.href = './login.html'
+              }
+            }.bind(this)
+          });
+        },
+        submitForm: function (formName) {
+          this.$refs[formName].validate(function (valid) {
+            if (valid) {
+              alert('submit!');
+              vm.roleShow = !vm.roleShow
+            } else {
+              console.log('error submit!!');
+              return false;
+            }
+          });
+        },
+        resetForm: function (formName) {
+          this.$refs[formName].resetFields();
+        },
+        get_out_Login: function () {
+          // location.href = '/pingbiao-manage/login/logout'
+        }
+      }
+    }).$mount('#wrapper')
+  </script>
+
+  </html>

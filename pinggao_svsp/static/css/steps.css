@@ -1,0 +1,82 @@
+.steps-box {
+  padding-left: 100px;
+  height: 112px;
+}
+
+.steps-item {
+  float: left
+}
+
+.steps-icon {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  margin: -4px;
+  z-index: 0;
+}
+
+.steps-item.is-finish .steps-icon {
+  z-index: 2;
+}
+
+.steps-icon::before {
+    content: '';
+    border-radius: 50%;
+    border: 4px solid #D7DBDB;
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    left: 0px;
+    top: 0px;
+}
+
+.steps-icon::after {
+  content: '';
+  border-radius: 50%;
+  background: #929696;
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  left: 18%;
+  top: 17%;
+}
+
+.steps-item.is-finish .steps-icon {
+  border: 4px solid #94E1DA;
+}
+
+.steps-item.is-finish .steps-icon::before {
+  border: 4px solid #1DB1A4;
+}
+
+.steps-item.is-finish .steps-icon::after {
+  background: #009688;
+}
+
+.steps-line {
+  height: 4px;
+  margin-top: 10px;
+  width: 192px;
+  background: #D7DBDB;
+  z-index: 1;
+  position: relative;
+}
+
+.steps-text {
+  width: 218px;
+  text-align: center;
+  color: #777;
+  margin-left: -98px;
+  line-height: 28px;
+}
+
+.steps-item:last-child .steps-line {
+  display: none
+}
+
+.steps-item.is-process .steps-text li {
+  font-weight: bold;
+  color: #555;
+}

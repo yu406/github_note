@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>欢迎访问 国家电网公司招投标平台</title>
+  <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司" />
+  <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部" />
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" href="../../static/css/element_ui.css">
+  <link rel="stylesheet" href="../../static/css/common.css">
+
+</head>
+<style>
+  body {
+    background: #F2F2F2;
+  }
+
+  .table-box {
+    width: 100%;
+  }
+
+  .table-content {
+    margin-top: 0;
+  }
+
+  .el-table .warning-row {
+    background: #F0F9F8;
+  }
+</style>
+
+<body>
+  <div id="wrapper">
+    <div class="content-page">
+      <div class="table-box">
+        <div class="table-content">
+          <div class="table-operation">
+          </div>
+          <div class="el-table-box">
+            <el-table ref="table" v-loading="loading" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName" :height="tableHeight">
+              <el-table-column type="index" width="44">
+              </el-table-column>
+              <el-table-column prop="one" label="项目状态" width="140">
+              </el-table-column>
+              <el-table-column prop="two" label="项目编号" width="220">
+              </el-table-column>
+              <el-table-column prop="three" label="项目名称" width="600">
+              </el-table-column>
+              <el-table-column prop="date" label="申请时间">
+              </el-table-column>
+              <el-table-column prop="one" label="递交状态">
+              </el-table-column>
+              <el-table-column label="操作" width="160">
+                <template slot-scope="scope">
+                  <el-link type="primary" @click="parent.xadmin.add_tab('查看递交情况','../../pages/supplier_service_platform/submit_rounds_check.html')">查看递交情况</el-link>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <el-pagination background @current-change="handleCurrentChange" @size-change="handlePageSizeChange" layout="sizes,prev, pager, next, jumper,total"
+            :total="total" :page-sizes="[10, 20, 30, 40]" :page-size="pageSize">
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</body>
+<script src="../../static/vue.min.js" charset="utf-8"></script>
+<script src="../../static/element_ui.js" charset="utf-8"></script>
+<script src="../../static/layui/layui.js" charset="utf-8"></script>
+<script src="../../static/js/xadmin.js" charset="utf-8"></script>
+<script src="../../static/axios.min.js" charset="utf-8"></script>
+<script src="../../static/js/common.js" charset="utf-8"></script>
+<script>
+  var vm = new Vue({
+    data: {
+      loading: false,
+      active: 1,
+      tableHeight: 500,
+      pageNum: "1",
+      pageSize: "10",
+      total: "",
+      tableData: [],
+    },
+    mounted: function () {
+      this.$nextTick(function () {
+        this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 80;
+      })
+      this.getData(1)
+    },
+    methods: {
+      getData: function (active) {
+        console.log(active);
+        this.tableData = [{
+          one: '正在招标',
+          two: 'LJWZ-2019-SGYYWZ-001',
+          three: '[国网黑龙江招标有限公司] 国网黑龙江省电力有限公司2019年三供一业物资招标采购项目',
+          date: '2019-09-02',
+        }, {
+          one: '正在招标',
+          two: 'LJWZ-2019-SGYYWZ-002',
+          three: '[国网黑龙江招标有限公司] 国网黑龙江省电力有限公司2019年三供一业物资招标采购项目',
+          date: '2019-09-02',
+        }, {
+          one: '正在招标',
+          two: 'LJWZ-2019-SGYYWZ-003',
+          three: '[国网黑龙江招标有限公司] 国网黑龙江省电力有限公司2019年三供一业物资招标采购项目',
+          date: '2019-09-02',
+        }, {
+          one: '正在招标',
+          two: 'LJWZ-2019-SGYYWZ-004',
+          three: '[国网黑龙江招标有限公司] 国网黑龙江省电力有限公司2019年三供一业物资招标采购项目',
+          date: '2019-09-02',
+        }]
+      },
+      handleCurrentChange: function (pageNum) {
+        this.pageNum = pageNum
+        this.getData()
+      },
+      handlePageSizeChange: function (pageSize) {
+        this.pageSize = pageSize
+        this.getData()
+      },
+      handleEdit: function () {
+
+      },
+      handleDelete: function () {
+
+      },
+      handleCheck: function (index, val) {
+        // console.log(val);
+      },
+      handleCheckChange: function (val) {
+        console.log(val);
+      },
+      submitFormEdit: function (val) {
+        console.log(val);
+      },
+      tableRowClassName: function (scope) {
+        if (scope.rowIndex % 2 === 0) {
+          return 'warning-row';
+        }
+        return '';
+      },
+
+
+    },
+  }).$mount('#wrapper')
+</script>
+
+</html>

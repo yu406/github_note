@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>欢迎访问 国家电网公司招投标平台</title>
+  <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司" />
+  <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部" />
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" href="../../static/css/element_ui.css">
+  <link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<style>
+  body {
+    background: #fff;
+    padding: 0 20px 0;
+  }
+
+  .check-box {
+    position: relative;
+    padding: 22px 0 100px 0px;
+  }
+
+  ul.submit-btn {
+    padding-left: 280px;
+    line-height: 66px;
+    height: 76px;
+    width: 100%;
+    background: #fff;
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    border-top: 1px solid #e4e4e4;
+    z-index: 10002;
+  }
+
+  .el-form-item {
+    margin-bottom: 16px;
+  }
+
+  .el-form-item__content {
+    line-height: 20px;
+  }
+
+  .form-item-editor .el-form-item__label {
+    line-height: 300px;
+  }
+
+  .el-input {
+    width: 902px;
+  }
+
+  .el-select .el-input {
+    width: 280px;
+  }
+
+  .el-form-item__error {
+    padding-top: 0
+  }
+
+  .unit-to-tip {
+    font-size: 12px;
+    color: #009988;
+    margin-right: 80px
+  }
+
+  .el-select-dropdown {
+    z-index: 10002 !important
+  }
+
+  .w-e-text-container {
+    height: 400px !important
+  }
+
+  .publicity-text {
+    min-height: 50px;
+    text-indent: 2em;
+    padding-bottom: 14px
+  }
+
+  /* a file */
+
+  .file {
+    position: relative;
+    display: inline-block;
+    border-radius: 4px;
+    overflow: hidden;
+    color: #0000FF;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 40px;
+    text-align: center;
+    height: 30px;
+  }
+
+  .file input {
+    position: absolute;
+    right: 0;
+    top: 0;
+    opacity: 0;
+    /*关键点*/
+    filter: alpha(opacity=0);
+    /*兼容ie*/
+    font-size: 100px;
+    cursor: pointer;
+  }
+</style>
+
+<body>
+  <div id="wrapper">
+    <div class="content-page">
+      <div class="check-box">
+        <el-form :model="addForm" :rules="rules" ref="addForm" label-width="120px" class="dialog-form">
+          <el-form-item label="标题" prop="title">
+            <el-input v-model="addForm.title"></el-input>
+          </el-form-item>
+          <el-form-item label="发布单位">
+            <el-input v-model="addForm.providerName" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="内容" class="form-item-editor" required>
+            <div id="editor-box" style="width:900px;height:400px;margin-bottom:20px"></div>
+          </el-form-item>
+          <el-form-item label="附件">
+            <a href="javascript:;" class="file">
+                        <input id="file" type="file" name="file" @change="uploadFile($event)"
+                               accept="
+                                        .xls,
+                                        .ppt,
+                                        .pptx,
+                                        jpg,
+                                        image/jpeg,
+                                        .docx,
+                                        image/png,
+                                        application/msword,application/pdf,
+                                        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                        >上传附件</a>
+            <div id="uploader"></div>
+          </el-form-item>
+        </el-form>
+      </div>
+      <ul class="submit-btn">
+        <el-button type="warning" @click="preview()">
+          预览
+        </el-button>
+        <el-button @click="release()" type="info" size="medium">签章(发 布)</el-button>
+        <el-button @click="submitFormAdd('addForm',true)" type="primary">保 存</el-button>
+        <el-button @click="toXadmin()" size="medium">取 消</el-button>
+      </ul>
+    </div>
+  </div>
+</body>
+
+<script src="../../static/vue.min.js" charset="utf-8"></script>
+<script src="../../static/element_ui.js" charset="utf-8"></script>
+<script src="../../static/layui/layui.js" charset="utf-8"></script>
+<script src="../../static/js/xadmin.js" charset="utf-8"></script>
+<script type="text/javascript" src="../../static/wangEditor.min.js" charset="utf-8"></script>
+<script src="../../static/js/common.js" charset="utf-8"></script>
+<script src="../../static/myAjax.js" charset="utf-8"></script>
+<script src="../../static/common/commonUtils.js" charset="utf-8"></script>
+
+<script>
+  var vm = new Vue({
+    data: {
+      checked: true,
+      addForm: {
+        id: "", //主键id
+        projectId: "", //项目id
+        clarifyId: "", //澄清单id
+        minuteMarkId: "", //标id
+        providerId: "", //供应商id
+        providerName: "", //供应商name(发布单位)
+        subpackageId: "", //包id
+        title: '', //标题
+        replyContent: '', //回复内容
+        sign: '', //签名回执
+        signStatus: '', //签名状态
+        status: "", //回复状态 (0  待回复  1  已回复)
+      },
+      uploadFileList: [], //上传附件集合
+      rules: {
+        title: [{
+          required: true,
+          message: '请输入回复澄清标题',
+          trigger: 'blur'
+        }],
+      },
+    },
+    created: function () {
+
+    },
+    mounted: function () {
+      this.addForm.id = common.getUrlParam("replyClarificationId");
+      console.log(this.addForm);
+      this.getReplyClarification();
+    },
+    methods: {
+      //获取数据
+      getReplyClarification: function () {
+        ajax({
+          url: common.url_shuaipeng + "/reply/checkReplyClarification?id=" + this.addForm.id,
+          contentType: "application/json;charset=utf-8",
+          success: function (res) {
+            if (res.code == "200") {
+              if (res.data == undefined) {
+                this.$notify({
+                  title: '请求失败',
+                  message: res.errmsg,
+                  type: 'error',
+                  position: 'bottom-right'
+                });
+                return;
+              }
+              //that.addForm.id= "",//主键id
+              this.addForm.projectId = res.data.projectId, //项目id
+                this.addForm.clarifyId = res.data.clarifyId, //澄清单id
+                this.addForm.minuteMarkId = res.data.minuteMarkId, //标id
+                this.addForm.providerId = res.data.providerId, //供应商id
+                this.addForm.providerName = res.data.providerName, //供应商name(发布单位)
+                this.addForm.subpackageId = res.data.subpackageId, //包id
+                this.addForm.title = res.data.title, //标题
+                this.addForm.replyContent = res.data.replyContent, //回复内容
+                editor1.txt.html(this.addForm.replyContent);
+              this.addForm.sign = res.data.sign, //签名回执
+                this.addForm.signStatus = res.data.signStatus, //签名状态
+                this.addForm.status = res.data.status //回复状态 (0  待回复  1  已回复)
+              this.uploadFileList = res.data.uploadFileList; //上传附件集合
+              var uploader = document.getElementById("uploader");
+              uploader.innerHTML = "";
+              if (this.uploadFileList != undefined && this.uploadFileList.length > 0) {
+                for (var i = 0; i < this.uploadFileList.length; i++) {
+                  uploader.innerHTML += "<div>" + this.uploadFileList[i].fileName + "</div>";
+                }
+              }
+            } else {
+              this.$notify({
+                title: '请求失败',
+                message: res.errmsg,
+                type: 'error',
+                position: 'bottom-right'
+              });
+            }
+          }.bind(this)
+        });
+      },
+      //上传
+      uploadFile: function (event) {
+        var that = this;
+        if (event.target.files[0] == undefined || event.target.files[0].length > 0) {
+          return;
+        }
+        if (that.uploadFileList != undefined && that.uploadFileList.length > 4) {
+          that.$notify({
+            title: '最多上传5个文件',
+            message: '',
+            type: 'error',
+            position: 'bottom-right'
+          });
+          return;
+        }
+        var file = event.target.files[0];
+        var fileData = new FormData();
+        if (!commonUtils.fileTypeUtils(file)) {
+          that.$notify({
+            title: '请上传默认类型文件',
+            message: '',
+            type: 'error',
+            position: 'bottom-right'
+          });
+          return;
+        }
+        var dataId = that.addForm.id == undefined || that.addForm.id == "" ? undefined : that.addForm.id;
+        fileData.append("file", file);
+        fileData.append("type", "referenceFilePath");
+        if (dataId != undefined) {
+          fileData.append("dataId", dataId);
+        }
+        ajax({
+          url: common.url_upload + "/file/upload",
+          type: "POST",
+          data: fileData,
+          // contentType: "application/json;charset=utf-8",
+          success: function (res) {
+            if (res.code == "200") {
+              if (res.data == undefined) {
+                this.$notify({
+                  title: '请求失败',
+                  message: res.errmsg,
+                  type: 'error',
+                  position: 'bottom-right'
+                });
+                return;
+              }
+              this.uploadFileList.push(res.data);
+              var uploader = document.getElementById("uploader");
+              uploader.innerHTML = "";
+              if (this.uploadFileList != undefined && this.uploadFileList.length > 0) {
+                for (var i = 0; i < this.uploadFileList.length; i++) {
+                  uploader.innerHTML += "<div>" + this.uploadFileList[i].fileName + "</div>";
+                }
+              }
+            } else {
+              this.$notify({
+                title: '请求失败',
+                message: res.errmsg,
+                type: 'error',
+                position: 'bottom-right'
+              });
+            }
+          }.bind(this)
+        });
+      },
+      //点击保存
+      submitFormAdd: function (formName,boo) {
+        var that = this;
+        that.addForm.replyContent = editor1.txt.text();
+        var strJson = editor1.txt.html().replace(/&nbsp;/g, "").replace(/\s/g, "");
+        if (strJson == '<p></p>' || strJson == '<p><br></p>' || that.addForm.replyContent == "<p><br></p>") {
+          that.$notify({
+            title: '失败',
+            message: '请输入回复澄清内容!',
+            type: 'error',
+            position: 'bottom-right'
+          });
+          return;
+        }
+        this.$refs[formName].validate(function (valid) {
+          if (valid) {
+            //提交
+            that.update(true);
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      //编辑
+      update: function (boo) {
+        var that = this;
+        var data = {
+          title: that.addForm.title,
+          id: that.addForm.id,
+          replyContent: that.addForm.replyContent,
+          clarifyId:that.addForm.clarifyId,
+          sign: (that.addForm.sign == undefined || that.addForm.sign == "") ? undefined : that.addForm.sign, //签名回执
+          signStatus: (that.addForm.signStatus == undefined || that.addForm.signStatus == "") ? undefined : that
+            .addForm.signStatus, //签名状态
+          status: (that.addForm.status == undefined || that.addForm.status == "") ? "0" : that.addForm.status, //回复状态  0待回复   1已回复
+          uploadFileList: that.uploadFileList
+        }
+        ajax({
+          url: common.url_shuaipeng + "/reply/updateReplyClarificationDTO",
+          type: "POST",
+          data: JSON.stringify(data),
+          contentType: "application/json;charset=utf-8",
+          success: function (res) {
+            console.log(res);
+            if (res.code == "200") {
+              if (res.data == undefined) {
+                this.$notify({
+                  title: '请求失败',
+                  message: res.errmsg,
+                  type: 'error',
+                  position: 'bottom-right'
+                });
+                return;
+              }
+              this.toPage(boo);
+            } else {
+              this.$notify({
+                title: '请求失败',
+                message: res.errmsg,
+                type: 'error',
+                position: 'bottom-right'
+              });
+            }
+          }.bind(this)
+        });
+      },
+      //跳页面  boo 为 true  跳列表页   false  跳预览页
+      toPage: function (boo) {
+        if (boo) {
+          this.$notify({
+            title: '保存成功',
+            message: "",
+            type: 'success',
+            position: 'bottom-right'
+          });
+          this.toXadmin();
+        } else {
+          parent.xadmin.add_tab('预览公示',
+            '../pinggao_svsp/pages/supplier_service_platform/add_supplier_reply_check.html?replyClarificationId=' +
+            this.addForm.id)
+        }
+      },
+      //关闭页面刷新
+      toXadmin: function () {
+        setTimeout(function () {
+          parent.xadmin.add_tab('回复澄清',
+            '../pinggao_svsp/pages/supplier_service_platform/reply_to_clarify_list.html', true);
+          xadmin.del_tab();
+        }, 500);
+      },
+      //签章发布
+      release: function () {
+        this.addForm.sign = "签章回执"; //签章回执
+        this.addForm.signStatus = "Y"; //签章状态
+        this.addForm.status = "1";
+          this.submitFormAdd('addForm',true);
+      },
+      //预览
+      preview: function () {
+          this.submitFormAdd('addForm',false);
+      },
+    },
+  }).$mount('#wrapper')
+</script>
+<script type="text/javascript">
+  var E = window.wangEditor
+  var editor1 = new E('#editor-box');
+  editor1.customConfig.onchange = function (html) {
+    // html 即变化之后的内容
+  }
+  editor1.create();
+  editor1.txt.html()
+</script>
+
+</html>

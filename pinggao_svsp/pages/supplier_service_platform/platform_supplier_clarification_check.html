@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>欢迎访问 国家电网公司招投标平台</title>
+  <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司" />
+  <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部" />
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" href="../../static/css/element_ui.css">
+  <link rel="stylesheet" href="../../static/css/common.css">
+
+</head>
+<style>
+  .table-box {
+    padding-top: 6px
+  }
+
+  .check-box {
+    padding: 0 44px 14px 14px;
+  }
+
+  .check-title {
+    padding-left: 16px;
+    color: #009988;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    line-height: 48px;
+  }
+
+  .check-title::before {
+    content: '';
+    left: 0;
+    top: 13px;
+    display: block;
+    width: 4px;
+    height: 20px;
+    background: #009988;
+    position: absolute;
+  }
+
+  .check-content {
+    width: 900px;
+    background: #F2F2F2;
+    padding-top: 20px
+  }
+
+  .check-content li dl {
+    float: left;
+    min-height: 30px;
+    line-height: 20px;
+    margin-bottom: 12px
+  }
+
+  .check-content li dl:first-child {
+    width: 124px;
+    text-align: right;
+    padding-right: 18px;
+    color: #777
+  }
+
+  .check-content li dl:last-child {
+    width: 190px;
+  }
+
+  .tree-box-left {
+    width: 210px;
+    height: 100vh;
+    background: #fff;
+    margin-right: 14px;
+    flex-shrink: 0;
+  }
+
+  .is-current .el-tree-node__label {
+    color: #009988
+  }
+
+  .el-link {
+    padding: 0 5px
+  }
+
+  ul.submit-btn {
+    padding-left: 16px;
+    line-height: 58px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    border-top: 1px solid #e4e4e4;
+    background: #fff
+  }
+
+  .accessory {
+    padding-left: 46px;
+    color: #0000FF;
+    line-height: 26px;
+  }
+</style>
+
+<body>
+  <div id="wrapper">
+    <div class="content-page">
+      <div class="table-box">
+        <div class="check-box">
+          <div class="check-title"><span>基本信息</span>
+          </div>
+          <div class="check-content">
+            <ul class="clearfix">
+              <li class="float">
+                <dl>澄清单号</dl>
+                <dl>20180530001</dl>
+              </li>
+              <li class="float">
+                <dl>澄清类型</dl>
+                <dl>商务</dl>
+              </li>
+            </ul>
+            <ul class="clearfix">
+              <li class="float">
+                <dl>项目编号</dl>
+                <dl>20180530001</dl>
+              </li>
+              <li class="float">
+                <dl>项目名称</dl>
+                <dl>上海市城市基础建设工程一期</dl>
+              </li>
+            </ul>
+            <ul class="clearfix">
+              <li class="float">
+                <dl>澄清范围</dl>
+                <dl>按项目</dl>
+              </li>
+            </ul>
+            <ul class="clearfix">
+              <li class="float">
+                <dl>标题</dl>
+                <dl>分标1(分包1,分包2,分包3)</dl>
+              </li>
+            </ul>
+            <ul class="clearfix">
+              <li class="float">
+                <dl>技术规范ID</dl>
+                <dl></dl>
+              </li>
+              <li class="float">
+                <dl>条款号</dl>
+                <dl></dl>
+              </li>
+            </ul>
+            <ul class="clearfix">
+              <li class="float">
+                <dl>招标文件描述</dl>
+                <dl style="width:40vw"></dl>
+              </li>
+            </ul>
+            <ul class="clearfix">
+              <li class="float">
+                <dl>问题内容</dl>
+                <dl style="width:40vw">澄清内容澄清内容澄清内容澄清内容澄清内容澄清内容澄清内容澄清内容澄清内容澄清内容澄清内容澄清内容</dl>
+              </li>
+            </ul>
+            <ul class="clearfix">
+              <li class="float">
+                <dl>发布机构类型</dl>
+                <dl>招标代理机构</dl>
+              </li>
+              <li class="float">
+                <dl>发布机构名称</dl>
+                <dl>中电普华</dl>
+              </li>
+            </ul>
+            <ul class="clearfix">
+              <li class="float">
+                <dl>发布人</dl>
+                <dl>张三</dl>
+              </li>
+              <li class="float">
+                <dl>发布时间</dl>
+                <dl>2019-05-12 12:00</dl>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="check-box">
+          <div class="check-title">附件</div>
+          <div class="accessory">
+            <li>澄清文件.pdf</li>
+            <li>澄清文件.pdf</li>
+            <li></li>
+          </div>
+        </div>
+        <!--<ul class="submit-btn">
+          <el-button size="medium" onclick="history.go(-1)">返回</el-button>
+        </ul>-->
+      </div>
+    </div>
+  </div>
+
+  </div>
+</body>
+<script src="../../static/vue.min.js" charset="utf-8"></script>
+<script src="../../static/element_ui.js" charset="utf-8"></script>
+<script src="../../static/axios.min.js" charset="utf-8"></script>
+<script src="../../static/js/common.js" charset="utf-8"></script>
+<script>
+  var vm = new Vue({
+    data: {
+
+
+    },
+    mounted: function () {},
+    methods: {
+      handleSelectionChange: function (val) {
+        console.log(val);
+      },
+      handleCurrentChange: function (val) {
+        // console.log(`当前页: ${val}`);
+      },
+      handleEdit: function () {
+
+      },
+      handleDelete: function () {
+
+      },
+      handleCheck: function (index, val) {
+        // console.log(val);
+      },
+      handleCheckChange: function (val) {
+        console.log(val);
+      }
+    },
+  }).$mount('#wrapper')
+</script>
+
+</html>

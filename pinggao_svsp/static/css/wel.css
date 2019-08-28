@@ -1,0 +1,111 @@
+body,
+html {
+  /*background: #F2F2F2*/
+}
+
+.wel-box-item {
+  float: left;
+  background: #fff;
+  width: 49.5%;
+  height: 45vh;
+  margin: 4px 0 10px 0;
+  overflow: hidden
+}
+
+.wel-box-item:nth-child(2) {
+  float: right
+}
+
+.wel-box-item.max {
+  width: 100%;
+  height: 100%;
+  min-height: 48vh
+}
+
+.wel-box-item-title {
+  color: #009988;
+  padding-left: 30px;
+  position: relative;
+  height: 34px;
+  line-height: 40px;
+}
+
+.wel-box-item-title::before {
+  content: '';
+  width: 4px;
+  height: 17px;
+  display: block;
+  background: #009988;
+  position: absolute;
+  top: 10px;
+  left: 20px;
+}
+
+.wel-box-item-content {
+  padding: 0 30px;
+  overflow: auto;
+  line-height: 30px;
+  height: 39vh;
+}
+
+.wel-box-item-content ul li:first-child {
+  float: left;
+  width: 90%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.wel-box-item-content ul li:last-child {
+  float: right;
+}
+
+ul.hundred {
+  color: #009988
+}
+
+.shortcut-box {
+  padding-left: 24px
+}
+
+.shortcut-item {
+  text-align: center;
+  margin: 20px 8px;
+  cursor: pointer
+}
+
+.shortcut-item span {
+  line-height: 40px;
+  /*font-size: 14px;*/
+  /*color: #009988*/
+}
+
+/*.shortcut-item:nth-child(1) span {
+  color: #FF9900
+}
+
+.shortcut-item:nth-child(2) span {
+  color: #009988
+}
+
+.shortcut-item:nth-child(3) span {
+  color: #3499FF
+}*/
+
+.shortcut-icon {
+  width: 250px;
+  height: 120px;
+  background: #F8F8F8;
+  text-align: center;
+  transition: all .3s;
+}
+
+.shortcut-icon img {
+  position: relative;
+  top: 40%
+}
+
+.shortcut-item:hover .shortcut-icon {
+  background: #F2F2F2
+}

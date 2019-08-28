@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>欢迎访问 国家电网公司招投标平台</title>
+  <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司" />
+  <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部" />
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" href="../../static/css/element_ui.css">
+  <link rel="stylesheet" href="../../static/css/common.css">
+
+</head>
+<style>
+  body {
+    background: #F2F2F2;
+  }
+
+  .table-box {
+    width: 100%;
+  }
+
+  .el-table .warning-row {
+    background: #F0F9F8;
+  }
+
+  .el-link {
+    height: 22px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis
+  }
+</style>
+
+<body>
+  <div id="wrapper">
+    <div class="content-page">
+      <div class="table-box">
+        <div class="table-header-box clearfix">
+          <el-form :inline="true" class="demo-form-inline">
+            <el-form-item>
+              <el-select v-model="search_obj.status" clearable placeholder="回复状态">
+                <el-option v-for="item in statusOptions" :label="item.label" :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="search()">查询</el-button>
+              <el-button @click="clearSearch()">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div class="table-content">
+          <div class="table-operation">
+          </div>
+          <div class="el-table-box">
+            <el-table ref="table" v-loading="loading" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName" :height="tableHeight">
+              <el-table-column type="index" width="44">
+              </el-table-column>
+              <el-table-column prop="code" label="澄清单号" min-width="140">
+              </el-table-column>
+              <el-table-column label="内容" min-width="220">
+                <template slot-scope="scope">
+                  <!--<span>wqqw</span>-->
+                  <el-link type="primary" :title="scope.row.clarifyContent" @click="checkClarify(scope.row)">{{scope.row.clarifyContent}}
+                  </el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="replyTime" label="回复截止日期" min-width="120">
+                <template slot-scope="scope">
+                  {{dayjs(scope.row.replyTime).format('YYYY-MM-DD')}}
+                </template>
+              </el-table-column>
+              <el-table-column prop="writeDate" label="发布澄清日期" min-width="120">
+                <template slot-scope="scope">
+                  {{dayjs(scope.row.writeDate).format('YYYY-MM-DD HH:mm')}}
+                </template>
+              </el-table-column>
+              <el-table-column prop="agencyName" label="招标代理机构" min-width="160">
+              </el-table-column>
+              <el-table-column prop="status" label="回复状态" min-width="140">
+                <template slot-scope="scope">
+                  {{scope.row.status | filterStatus }}
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" min-width="120">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.status=='4'">
+                    <el-link @click="reply(scope.row)" type="primary">回复</el-link>
+                  </template>
+                  <template v-if="scope.row.status=='5'">
+                    <el-link @click="checkReply(scope.row)" type="primary">查看回复</el-link>
+                  </template>
+                  <!-- <el-link @click="parent.xadmin.add_tab('回复','../../pages/supplier_service_platform/add_supplier_reply.html')" type="primary"
+                                   v-if="scope.$index%2==0">回复</el-link>
+                                 <el-link type="primary" @click="parent.xadmin.add_tab('查看回复','../../pages/supplier_service_platform/add_supplier_reply_check.html')"
+                                   v-else>查看回复</el-link>-->
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <el-pagination background @size-change="tableDataSizeChange" @current-change="tableDataCurrentChange" :current-page.sync="tableDataIsPage"
+            layout="sizes,prev, pager, next, jumper,total" :total="tableDataIsTotal" :pager-count="7" :page-sizes="[10, 20, 30, 40]"
+            :page-size="tableDataIsPageSize">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</body>
+<script src="../../static/vue.min.js" charset="utf-8"></script>
+<script src="../../static/element_ui.js" charset="utf-8"></script>
+<script src="../../static/layui/layui.js" charset="utf-8"></script>
+<script src="../../static/js/xadmin.js" charset="utf-8"></script>
+<script src="../../static/myAjax.js" charset="utf-8"></script>
+<script src="../../static/js/common.js" charset="utf-8"></script>
+<script src="../../static/js/dayjs.min.js" charset="utf-8"></script>
+<script>
+  var vm = new Vue({
+    filters: {
+      filterStatus: function (val) {
+        if (val == "4") {
+          return "待回复"
+        } else if (val == "5") {
+          return "已回复"
+        }
+      },
+
+    },
+    data: {
+      tableHeight: parent.innerHeight - 340,
+      loading: false,
+      search_obj: {
+        status: ''
+      },
+      tableData: [], //列表数据
+      tableDataIsPage: 1, //列表当前页
+      tableDataIsPageSize: 10, //列表每页显示数量
+      tableDataIsTotal: 0, //列表数据总条数
+      statusOptions: [{
+          value: "4",
+          label: '待回复'
+        },
+        {
+          value: "5",
+          label: '已回复'
+        }
+      ]
+    },
+    mounted: function () {
+      this.getData()
+    },
+    methods: {
+      //获取分页数据
+      getData: function () {
+        this.loading = true;
+        var data = {
+          page: this.page,
+          pageSize: this.pageSize,
+          status: this.search_obj.status,
+        }
+        ajax({
+          url: common.url_shuaipeng + "/reply/pageListClarification",
+          type: "POST",
+          data: JSON.stringify(data),
+          contentType: "application/json;charset=utf-8",
+          success: function (res) {
+            if (res.code == "200") {
+              if (res.data.list == undefined || res.data.list <= 0) {
+                this.$notify({
+                  title: '请求失败',
+                  message: res.errmsg,
+                  type: 'error',
+                  position: 'bottom-right'
+                });
+                return;
+              }
+              this.tableData = res.data.list;
+              this.tableDataIsTotal = res.data.total
+            } else {
+              this.$notify({
+                title: '请求失败',
+                message: res.errmsg,
+                type: 'error',
+                position: 'bottom-right'
+              });
+            }
+          }.bind(this)
+        });
+        this.loading = false;
+      },
+      //列表每页显示数量变化
+      tableDataSizeChange: function (val) {
+        this.tableDataIsPageSize = val;
+        this.tableDataIsPage = 1;
+        this.getData();
+      },
+      // 列表当前页变化
+      tableDataCurrentChange: function (val) {
+        this.tableDataIsPage = val;
+        this.getData();
+      },
+      //搜索
+      search: function () {
+        this.tableDataIsPageSize = 10;
+        this.tableDataIsPage = 1;
+        this.getData();
+      },
+      checkClarify: function (row) {
+        parent.xadmin.add_tab('查看澄清',
+          '../pinggao_svsp/pages/supplier_service_platform/Reply_to_clarify_check.html?clarifyId=' + row.id);
+      },
+      reply: function (row) {
+        //跳转
+        if (row.replyClarificationId == undefined || row.replyClarificationId == "") {
+          var data = {
+            projectId: row.projectId,
+            clarifyId: row.id,
+            minuteMarkId: row.minuteMarkId,
+            providerId: row.tendereeId,
+            subpackageId: row.subpackageId,
+            status: "0",
+          }
+          ajax({
+            url: common.url_shuaipeng + "/reply/saveReplyClarificationDTO",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json;charset=utf-8",
+            success: function (res) {
+              console.log(res);
+              if (res.code == "200") {
+                if (res.data == undefined) {
+                  this.$notify({
+                    title: '请求失败',
+                    message: res.errmsg,
+                    type: 'error',
+                    position: 'bottom-right'
+                  });
+                  return;
+                }
+                parent.xadmin.add_tab('回复',
+                  '../pinggao_svsp/pages/supplier_service_platform/add_supplier_reply.html?replyClarificationId=' +
+                  res.data.id);
+              } else {
+                this.$notify({
+                  title: '请求失败',
+                  message: res.errmsg,
+                  type: 'error',
+                  position: 'bottom-right'
+                });
+              }
+            }.bind(this)
+          });
+        } else {
+          parent.xadmin.add_tab('回复',
+            '../pinggao_svsp/pages/supplier_service_platform/add_supplier_reply.html?replyClarificationId=' +
+            row.replyClarificationId);
+        }
+      },
+      checkReply: function (row) {
+        parent.xadmin.add_tab('查看回复',
+          '../pinggao_svsp/pages/supplier_service_platform/add_supplier_reply_check.html?replyClarificationId=' +
+          row.replyClarificationId)
+      },
+      clearSearch: function () {
+        this.search_obj = {
+          status: ''
+        };
+      },
+      tableRowClassName: function (scope) {
+        if (scope.rowIndex % 2 === 0) {
+          return 'warning-row';
+        }
+        return '';
+      },
+    },
+  }).$mount('#wrapper')
+</script>
+
+</html>

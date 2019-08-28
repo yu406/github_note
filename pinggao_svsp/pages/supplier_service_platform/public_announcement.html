@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>欢迎访问 国家电网公司招投标平台</title>
+  <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司" />
+  <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部" />
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" href="../../static/css/element_ui.css">
+  <link rel="stylesheet" href="../../static/css/common.css">
+
+</head>
+<style>
+  body {
+    background: #F2F2F2;
+  }
+
+  .tree-box-left {
+    width: 210px;
+    height: 100vh;
+    background: #fff;
+    margin-right: 14px;
+    flex-shrink: 0;
+    padding-top: 30px
+  }
+
+  .tree-box-left li {
+    position: relative;
+    padding-left: 40px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+    color: #444;
+    letter-spacing: 2px;
+    font-size: 14px
+  }
+
+  .tree-box-left li::before {
+    content: '.';
+    font-size: 34px;
+    position: absolute;
+    left: 26px;
+    top: -11px;
+    color: #444
+  }
+
+  .tree-box-left li.active {
+    color: #FF6600
+  }
+
+  .tree-box-left li.active::before {
+    color: #FF6600
+  }
+
+  .table-box {
+    width: 100%;
+  }
+
+  .table-content {
+    margin-top: 0;
+  }
+
+  .el-table .warning-row {
+    background: #F0F9F8;
+  }
+</style>
+
+<body>
+  <div id="wrapper">
+    <div class="content-page flex">
+      <div class="tree-box-left">
+        <li :class="{active:active==1}" @click="active=1;getData(1)">投标邀请书</li>
+        <li :class="{active:active==2}" @click="active=2;getData(2)">招标公告</li>
+        <li :class="{active:active==3}" @click="active=3;getData(3)">变更公告</li>
+        <li :class="{active:active==4}" @click="active=4;getData(4)">浮动系数公示</li>
+        <li :class="{active:active==5}" @click="active=5;getData(5)">开标价格公示</li>
+        <li :class="{active:active==6}" @click="active=6;getData(6)">中标候选人公示</li>
+        <li :class="{active:active==7}" @click="active=7;getData(7)">中标公告</li>
+        <li :class="{active:active==8}" @click="active=8;getData(8)">中标通知书</li>
+      </div>
+      <div class="table-box">
+        <div class="table-content">
+          <div class="table-operation">
+          </div>
+          <div class="el-table-box">
+            <el-table ref="table" v-loading="loading" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName" :height="tableHeight">
+              <el-table-column type="index" width="44">
+              </el-table-column>
+              <el-table-column prop="purchaseStatus" label="项目状态" width="140">
+                <template slot-scope="scope">
+                  {{scope.row.purchaseStatus | projectStatus}}
+                </template>
+              </el-table-column>
+              <el-table-column prop="projectCode" label="项目编号" width="220">
+              </el-table-column>
+              <el-table-column label="项目名称" min-width="300">
+                <template slot-scope="scope">
+                  <el-link type="primary" @click="details_check(active,scope.row)">{{scope.row.projectName}}</el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="createDate" label="创建时间" min-width="300">
+              </el-table-column>
+            </el-table>
+          </div>
+          <el-pagination background @current-change="handlePageNumChange" @size-change="handleSizeChange" layout="sizes,prev, pager, next, jumper,total"
+            :total="total" :page-sizes="[10, 20, 30, 40]" :page-size="pageSize" :current-page.sync="pageNum">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</body>
+<script src="../../static/vue.min.js" charset="utf-8"></script>
+<script src="../../static/element_ui.js" charset="utf-8"></script>
+<script src="../../static/layui/layui.js" charset="utf-8"></script>
+<script src="../../static/js/xadmin.js" charset="utf-8"></script>
+<script src="../../static/myAjax.js" charset="utf-8"></script>
+<script src="../../static/js/common.js" charset="utf-8"></script>
+<script>
+  var vm = new Vue({
+    filters: {
+      projectStatus: function (val) {
+        if (val == '1') {
+          return "待发布公告"
+        } else if (val == '2') {
+          return "公告中"
+        } else if (val == '3') {
+          return "公告中,接标中"
+        } else if (val == '4') {
+          return "公告中,接标结束"
+        } else if (val = '5') {
+          return "公告结束,接标中"
+        } else if (val = '6') {
+          return "待开标"
+        } else if (val = '7') {
+          return "开标中"
+        } else if (val = '8') {
+          return "待评标"
+        } else if (val = '9') {
+          return "评标中"
+        } else if (val = '10') {
+          return "待定标"
+        } else if (val = '11') {
+          return "定标中"
+        } else if (val = '12') {
+          return "结束"
+        }
+      },
+    },
+    data: {
+      loading: false,
+      active: 1,
+      pageNum: "1",
+      pageSize: "10",
+      total: "0",
+      tableHeight: parent.innerHeight - 256,
+      tableData: [],
+    },
+    mounted: function () {
+      this.getData(1)
+    },
+    methods: {
+      getData: function (active) {
+        this.loading = true;
+        var suffix = "";
+        var data = {
+          page: this.pageNum,
+          pageSize: this.pageSize
+        }
+        if (active == 1) {
+          suffix = "/formula/IFB"
+        } else if (active == 2) {
+          suffix = "/formula/listQueryBiddingAnnouncement"
+        } else if (active == 3) {
+          suffix = "/formula/listQueryAlterationAnnouncement"
+        } else if (active == 4) {
+          suffix = "/formula/listQueryFloatingCoefficient"
+        } else if (active == 5) {
+          suffix = "/formula/listQueryTendersPrice"
+        } else if (active == 6) {
+          suffix = "/formula/listQueryCandidate"
+        } else if (active == 7) {
+          suffix = "/formula/listQueryAnnouncement"
+        } else if (active == 8) {
+          suffix = "/formula/listQueryAdvice"
+        }
+        ajax({
+          url: common.url_jiazhen + suffix,
+          type: "POST",
+          data: JSON.stringify(data),
+          contentType: "application/json;charset=utf-8",
+          success: function (res) {
+            if (res.code == "200") {
+              this.loading = false;
+              this.tableData = res.data.list;
+              this.total = res.data.total
+            } else {
+              this.$notify({
+                title: '请求失败',
+                message: res.errmsg,
+                type: 'error',
+                position: 'bottom-right'
+              });
+            }
+          }.bind(this)
+        });
+      },
+      //列表分页码数
+      handlePageNumChange: function (val) {
+        this.pageNum = val;
+        this.getData();
+      },
+      //列表分页条数
+      handleSizeChange: function (val) {
+        this.pageSize = val;
+        this.pageNum = 1;
+        this.getData();
+      },
+      //跳转详情
+      details_check: function (active, row) {
+        if (active == 1 || active == 2) {
+          parent.xadmin.add_tab('公告查看',
+            '../pinggao_svsp/pages/supplier_service_platform/public_announcement_check.html?active=' +
+            active + "&&id=" + row.id)
+        } else if (active == 4 || active == 5 || active == 6 || active == 7 || active == 8) {
+          parent.xadmin.add_tab('公告查看',
+            '../pinggao_svsp/pages/supplier_service_platform/invitation_for_bid_check.html?active=' +
+            active + "&&projectId=" + row.projectId)
+        } else if (active == 3) {
+          parent.xadmin.add_tab('公告查看',
+            '../pinggao_svsp/pages/supplier_service_platform/public_alteration_check.html?active=' +
+            active + "&&id=" + row.id)
+        }
+      },
+      handleCurrentChange: function (page) {
+        this.page = page
+        this.getData(this.active)
+      },
+      handlePageSizeChange: function (pageSize) {
+        this.pageSize = pageSize
+        this.getData(this.active)
+      },
+      handleEdit: function () {
+
+      },
+      handleDelete: function () {
+
+      },
+      handleCheck: function (index, val) {
+        // console.log(val);
+      },
+      handleCheckChange: function (val) {
+        console.log(val);
+      },
+      submitFormEdit: function (val) {
+        console.log(val);
+      },
+      tableRowClassName: function (scope) {
+        if (scope.rowIndex % 2 === 0) {
+          return 'warning-row';
+        }
+        return '';
+      },
+
+
+    },
+  }).$mount('#wrapper')
+</script>
+
+</html>

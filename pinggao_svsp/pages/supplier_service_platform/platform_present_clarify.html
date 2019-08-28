@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>欢迎访问 国家电网公司招投标平台</title>
+    <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司"/>
+    <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部"/>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="stylesheet" href="../../static/css/element_ui.css">
+    <link rel="stylesheet" href="../../static/css/common.css">
+</head>
+<style>
+    body {
+        background: #fff;
+        padding: 0 20px 0;
+    }
+
+    .check-box {
+        position: relative;
+        padding-top: 22px;
+    }
+
+    .dialog-form {
+        width: 800px;
+    }
+
+    .el-form-item {
+        margin-bottom: 16px;
+        line-height: 38px;
+    }
+
+    .el-form-item.inline-block {
+        display: inline-block
+    }
+
+    .el-input {
+        width: 572px;
+    }
+
+    .inline-block .el-input {
+        width: 210px;
+    }
+
+    .el-textarea {
+        width: 572px;
+    }
+
+    .el-link {
+        line-height: 40px;
+    }
+
+    .el-form-item__error {
+        padding-top: 1px
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+    .search-box .el-icon-edit {
+        position: absolute;
+        left: 510px;
+        top: 10px;
+        color: #999;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .search-text {
+        width: 572px;
+        height: 34px;
+        line-height: 34px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        border: 1px solid #6DB5AE;
+        border-radius: 2px;
+        padding: 0 50px 0 10px;
+    }
+
+    ul.submit-btn {
+        padding-left: 210px;
+        line-height: 66px;
+        height: 76px;
+        width: 100%;
+        background: #fff;
+        position: fixed;
+        bottom: 0px;
+        left: 0;
+        border-top: 1px solid #e4e4e4;
+    }
+
+    /* a file */
+
+    .file {
+        position: relative;
+        display: inline-block;
+        border-radius: 4px;
+        overflow: hidden;
+        color: #0000FF;
+        text-decoration: none;
+        text-indent: 0;
+        line-height: 40px;
+        text-align: center;
+        height: 30px;
+    }
+
+    .file input {
+        position: absolute;
+        right: 0;
+        top: 0;
+        opacity: 0;
+        /*关键点*/
+        filter: alpha(opacity=0);
+        /*兼容ie*/
+        font-size: 100px;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+<div id="wrapper">
+    <div class="content-page">
+        <div class="check-box"></div>
+        <el-form :model="editForm" :rules="rules" ref="editForm" label-width="148px" class="dialog-form">
+            <el-form-item label="项目名称">
+                <el-input v-model="editForm.projectName" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="澄清类型" prop="type" class="inline-block">
+                <el-select v-model="editForm.type" @change="typeOptionsChange()">
+                    <el-option label="商务" value="1"></el-option>
+                    <el-option label="技术" value="2"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="澄清范围" prop="scope" class="inline-block">
+                <el-select v-model="editForm.scope" disabled>
+                    <el-option label="按项目" value="1"></el-option>
+                    <el-option label="按分标" value="2"></el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="澄清对象" prop="scopeIdNames" class="search-box">
+                <div class="search-text" @click="dialogEditIsTrue()">{{editForm.scopeIdNames}}</div>
+                <i @click="dialogEditIsTrue()" class="el-icon-edit"></i>
+            </el-form-item>
+            <el-form-item label="标题" prop="titles">
+                <el-input v-model="editForm.titles"></el-input>
+            </el-form-item>
+            <el-form-item label="技术规范ID" prop="skillManualId" class="inline-block">
+                <el-input v-model="editForm.skillManualId"></el-input>
+            </el-form-item>
+            <el-form-item class="inline-block">
+            </el-form-item>
+            <el-form-item label="条款号" prop="reguNumber" class="inline-block">
+                <el-input v-model="editForm.reguNumber"></el-input>
+            </el-form-item>
+            <el-form-item label="招标文件描述" prop="describe">
+                <el-input type="textarea" v-model="editForm.describe" :rows="3"></el-input>
+            </el-form-item>
+            <el-form-item label="问题内容" prop="content">
+                <el-input type="textarea" v-model="editForm.content" :rows="3"></el-input>
+            </el-form-item>
+            <el-form-item label="附件">
+                <a href="javascript:;" class="file">
+                    <input id="file" type="file" name="file" @change="uploadFile($event)"
+                           accept="
+                                        .xls,
+                                        .ppt,
+                                        .pptx,
+                                        jpg,
+                                        image/jpeg,
+                                        .docx,
+                                        image/png,
+                                        application/msword,application/pdf,
+                                        application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    >上传附件</a>
+                <div id="uploader"></div>
+            </el-form-item>
+
+        </el-form>
+    </div>
+    <ul class="submit-btn">
+        <el-button type="warning" @click="toPreView()">预览</el-button>
+        <el-button @click="signature()" type="info" size="medium">发 布</el-button>
+        <el-button @click="submitFormAdd()" type="primary">保 存</el-button>
+        <el-button @click="resetForm('editForm')" size="medium">取 消</el-button>
+    </ul>
+    <el-dialog title="选择分标分包" :visible.sync="dialogEdit" width="466px" :close-on-click-modal="false">
+        <el-tree :data="data" ref="vuetree" :default-checked-keys="checkedKeys" show-checkbox node-key="id"
+                 :props="defaultProps">
+        </el-tree>
+        <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="addList()" size="medium">确认</el-button>
+            <el-button @click="dialogEdit=false" size="medium">取消</el-button>
+        </span>
+    </el-dialog>
+</div>
+</div>
+</body>
+<script src="../../static/vue.min.js" charset="utf-8"></script>
+<script src="../../static/element_ui.js" charset="utf-8"></script>
+<script src="../../static/layui/layui.js" charset="utf-8"></script>
+<script src="../../static/js/xadmin.js" charset="utf-8"></script>
+<script src="../../static/axios.min.js" charset="utf-8"></script>
+<script src="../../static/js/common.js" charset="utf-8"></script>
+<script src="../../static/myAjax.js" charset="utf-8"></script>
+<script src="../../static/common/commonUtils.js" charset="utf-8"></script>
+
+<script>
+    var vm = new Vue({
+        data: {
+            dialogEdit: false,
+            checkedKeys: [],
+            editForm: {
+                id: "",
+                projectId: "",
+                projectName: "",
+                projectCode: "",
+                scope: "1",//澄清范围
+                type: "1",//澄清类型
+                titles: "",//标题
+                content: "",//问题内容
+                scopeIds: "",//澄清范围对应的id
+                scopeIdNames: "",
+                skillManualId: "",
+                reguNumber: "",
+                describe: "",
+                status: "",
+                uploadFileDTOList: []
+            },
+            rules: {
+                scopeIdNames: [{
+                    required: true,
+                    message: '请选择澄清对象',
+                    trigger: 'blur'
+                }],
+                type: [{
+                    required: true,
+                    message: '请选择澄清范围',
+                    trigger: 'blur'
+                }],
+                scope: [{
+                    required: true,
+                    message: '请选择澄清类型',
+                    trigger: 'change'
+                }],
+                titles: [{
+                    required: true,
+                    message: '请输入标题',
+                    trigger: 'blur'
+                }],
+                skillManualId: [{
+                    required: true,
+                    message: '请输入技术规范ID',
+                    trigger: 'blur'
+                }],
+                reguNumber: [{
+                    required: true,
+                    message: '请输入条款号',
+                    trigger: 'blur'
+                }],
+                describe: [{
+                    required: true,
+                    message: '请输入招标文件描述',
+                    trigger: 'blur'
+                }],
+                content: [{
+                    required: true,
+                    message: '请输入问题内容',
+                    trigger: 'blur'
+                }],
+            },
+            data: [],
+            defaultProps: {
+                children: 'children',
+                label: 'label'
+            }
+
+        },
+        created: function () {
+            this.editForm.projectId = common.getUrlParam("projectId");
+            this.editForm.projectName = common.getUrlParam("projectName");
+            this.editForm.scopeIds = this.editForm.projectId;
+            this.editForm.scopeIdNames = this.editForm.projectName;
+            this.editForm.id = common.getUrlParam("id");
+            if (this.editForm.id != null) {
+                this.getData();
+            }
+        },
+        methods: {
+            //根据id获取数据
+            getData: function () {
+                var that = this;
+                axios.get(common.url_fanjx + "/putForward/getAgencyClarifyById?id=" + this.editForm.id).then(
+                    function (res) {
+                        var data = res.data;
+                        if (data.code == "200") {
+                            that.editForm.id = data.data.id;
+                            that.editForm.projectId = data.data.projectId;
+                            that.editForm.projectName = data.data.projectName;
+                            that.editForm.projectCode = data.data.projectCode;
+                            that.editForm.scope = data.data.scope;
+                            that.editForm.type = data.data.type;
+                            that.editForm.titles = data.data.titles;
+                            that.editForm.content = data.data.content;
+                            that.editForm.scopeIds = data.data.scopeIds;
+                            that.editForm.skillManualId = data.data.skillManualId;
+                            that.editForm.reguNumber = data.data.reguNumber;
+                            that.editForm.describe = data.data.describe;
+                            that.editForm.uploadFileDTOList = data.data.uploadFileDTOList;
+                            var uploader = document.getElementById("uploader");
+                            uploader.innerHTML = "";
+                            if (that.editForm.uploadFileList != undefined && that.editForm.uploadFileList.length > 0) {
+                                for (var i = 0; i < that.editForm.uploadFileList.length; i++) {
+                                    uploader.innerHTML += "<div>" + that.editForm.uploadFileList[i].fileName + "</div>";
+                                }
+                            }
+                            if (that.editForm.scope == '1') {
+                                that.editForm.scopeIdNames = that.editForm.projectName;
+                            } else {
+                                that.getTreeDataEdit();
+                            }
+                        } else {
+                            this.$notify({
+                                title: '请求失败',
+                                message: res.errmsg,
+                                type: 'error',
+                                position: 'bottom-right'
+                            });
+                        }
+                    }.bind(this)
+                );
+            },
+            //澄清对象复选框默认选中
+            getTreeDataEdit: function () {
+                var that = this;
+                axios.get(common.url_fanjx + "/putForward/listMinuteMarkByProjectId/" + this.editForm.projectId).then(
+                    function (res) {
+                        console.log("res", res);
+                        if (res.data.code == 200) {
+                            if (res.data.data == undefined || res.data.data <= 0) {
+                                this.$notify({
+                                    title: '请求失败',
+                                    message: "该项目没有分标包",
+                                    type: 'error',
+                                    position: 'bottom-right'
+                                });
+                                return;
+                            }
+                            var dataTree = [];
+                            if (res.data.data != undefined && res.data.data.length > 0) {
+                                that.editForm.scopeIdNames = "";
+                                for (var i = 0; i < res.data.data.length; i++) {
+                                    res.data.data[i].minuteMarkTreeData.children = [];
+                                    res.data.data[i].minuteMarkTreeData.id = res.data.data[i].minuteMarkTreeData.minuteMarkId;
+                                    that.checkedKeys = [];
+                                    var str = that.editForm.scopeIds;
+                                    if (str != undefined) {
+                                        if (str.indexOf(",") != -1) {
+                                            that.checkedKeys = str.split(",");
+                                        } else {
+                                            that.checkedKeys.push(str);
+                                        }
+                                    }
+                                    for (var n = 0; n < that.checkedKeys.length; n++) {
+                                        if (that.checkedKeys[n] == res.data.data[i].minuteMarkTreeData.id) {
+                                            that.editForm.scopeIdNames += res.data.data[i].minuteMarkTreeData.label;
+                                            if (n < that.checkedKeys.length - 1) {
+                                                that.editForm.scopeIdNames += ",";
+                                            }
+                                        }
+                                    }
+                                    dataTree.push(res.data.data[i].minuteMarkTreeData);
+                                }
+                            }
+                            this.data = [
+                                {
+                                    id: null,
+                                    label: this.editForm.projectName,
+                                    minuteMarkId: 0,
+                                    projectId: this.editForm.projectId,
+                                    children: [],
+                                }
+                            ];
+                            this.data[0].children = dataTree;
+                        } else {
+                            this.$notify({
+                                title: '请求失败',
+                                message: "服务器繁忙,请稍后重试!",
+                                type: 'error',
+                                position: 'bottom-right'
+                            });
+                        }
+                    }.bind(this));
+            },
+            //根据项目id获取树状标包
+            getTreeData: function () {
+                axios.get(common.url_fanjx + "/putForward/listMinuteMarkByProjectId/" + this.editForm.projectId).then(
+                    function (res) {
+                        console.log("res", res);
+                        if (res.data.code == 200) {
+                            if (res.data.data == undefined || res.data.data <= 0) {
+                                this.$notify({
+                                    title: '请求失败',
+                                    message: "该项目没有分标包",
+                                    type: 'error',
+                                    position: 'bottom-right'
+                                });
+                                return;
+                            }
+                            var dataTree = [];
+                            if (res.data.data != undefined && res.data.data.length > 0) {
+                                for (var i = 0; i < res.data.data.length; i++) {
+                                    res.data.data[i].minuteMarkTreeData.children = [];
+                                    res.data.data[i].minuteMarkTreeData.id = res.data.data[i].minuteMarkTreeData.minuteMarkId;
+                                    dataTree.push(res.data.data[i].minuteMarkTreeData);
+                                }
+                            }
+                            this.data = [
+                                {
+                                    id: null,
+                                    label: this.editForm.projectName,
+                                    minuteMarkId: 0,
+                                    projectId: this.editForm.projectId,
+                                    children: [],
+                                }
+                            ];
+                            this.data[0].children = dataTree;
+                        } else {
+                            this.$notify({
+                                title: '请求失败',
+                                message: "服务器繁忙,请稍后重试!",
+                                type: 'error',
+                                position: 'bottom-right'
+                            });
+                        }
+                    }.bind(this));
+            },
+            //澄清类型变化
+            typeOptionsChange: function () {
+                if (this.editForm.type == '1') {
+                    this.editForm.scope = '1';
+                    this.editForm.scopeIds = this.editForm.projectId;
+                    this.editForm.scopeIdNames = this.editForm.projectName;
+                } else if (this.editForm.type == '2') {
+                    this.editForm.scopeIds = '';
+                    this.editForm.scopeIdNames = '';
+                    this.editForm.scope = '2';
+                    this.getTreeDataEdit();
+                }
+
+            },
+            //点击澄清对象
+            dialogEditIsTrue: function () {
+                if (this.editForm.scopeIds == this.editForm.projectId) {
+                    return;
+                }
+                this.dialogEdit = true;
+            },
+            //点击确认,把选择的标包放入对象中
+            addList: function () {
+                this.editForm.scopeIds = "";
+                this.editForm.scopeIdNames = "";
+                if (this.$refs.vuetree.getCheckedNodes(false, false) != undefined && this.$refs.vuetree.getCheckedNodes(false, false).length > 0) {
+                    for (var i = 0; i < this.$refs.vuetree.getCheckedNodes(false, false).length; i++) {
+                        if (this.$refs.vuetree.getCheckedNodes(false, false)[i].id != undefined) {
+                            this.editForm.scopeIdNames += this.$refs.vuetree.getCheckedNodes(false, false)[i].label;
+                            this.editForm.scopeIds += this.$refs.vuetree.getCheckedNodes(false, false)[i].minuteMarkId;
+                            if (i < this.$refs.vuetree.getCheckedNodes(false, false).length - 1) {
+                                this.editForm.scopeIds += ",";
+                                this.editForm.scopeIdNames += ",";
+                            }
+                        }
+                    }
+                }
+                console.log(this.$refs.vuetree.getCheckedNodes(false, false));
+                this.dialogEdit = false;
+            },
+            //上传
+            uploadFile: function (event) {
+                var that = this;
+                if (event.target.files[0] == undefined || event.target.files[0].length > 0) {
+                    return;
+                }
+                if (that.editForm.uploadFileList != undefined && that.editForm.uploadFileList.length > 4) {
+                    that.$notify({
+                        title: '最多上传5个文件',
+                        message: '',
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                    return;
+                }
+                var file = event.target.files[0];
+                var fileData = new FormData();
+                if (!commonUtils.fileTypeUtils(file)) {
+                    that.$notify({
+                        title: '请上传默认类型文件',
+                        message: '',
+                        type: 'error',
+                        position: 'bottom-right'
+                    });
+                    return;
+                }
+                var dataId = that.editForm.id == undefined || that.editForm.id == "" ? undefined : that.editForm.id;
+                fileData.append("file", file);
+                fileData.append("type", "referenceFilePath");
+                if (dataId != undefined) {
+                    fileData.append("dataId", dataId);
+                }
+                axios.post(common.url_fanjx + "/putForward/upload", fileData).then(
+                    function (res) {
+                        console.log(res);
+                        var data = res.data;
+                        if (data.code == "200") {
+                            if (data.data == undefined) {
+                                that.$notify({
+                                    title: '请求失败',
+                                    message: res.errmsg,
+                                    type: 'error',
+                                    position: 'bottom-right'
+                                });
+                                return;
+                            }
+                            that.editForm.uploadFileList = that.editForm.uploadFileList == undefined ? [] : that.editForm.uploadFileList;
+                            that.editForm.uploadFileList.push(data.data);
+                            var uploader = document.getElementById("uploader");
+                            uploader.innerHTML = "";
+                            if (that.editForm.uploadFileList != undefined && that.editForm.uploadFileList.length > 0) {
+                                for (var i = 0; i < that.editForm.uploadFileList.length; i++) {
+                                    uploader.innerHTML += "<div>" + that.editForm.uploadFileList[i].fileName + "</div>";
+                                }
+                            }
+                        } else {
+                            that.$notify({
+                                title: '请求失败',
+                                message: res.errmsg,
+                                type: 'error',
+                                position: 'bottom-right'
+                            });
+                        }
+                    }.bind(this));
+            },
+            //预览
+            toPreView: function () {
+                this.editForm.status = "2";
+                ajax({
+                    url: common.url_fanjx + "/putForward/saveAgencyClarify",
+                    type: "POST",
+                    data: JSON.stringify(this.editForm),
+                    contentType: "application/json;charset=utf-8",
+                    success: function (res) {
+                        if (res.code == 200) {
+                            this.loading = false;
+                            if (res.data == null) {
+                                this.$notify({
+                                    title: '请求失败',
+                                    message: "没有数据",
+                                    type: 'error',
+                                    position: 'bottom-right'
+                                });
+                                return;
+                            }
+                            this.editForm.id = res.data.id;
+                            parent.xadmin.add_tab('预览', '../pinggao_svsp/pages/supplier_service_platform/platform_clarify_management_preview.html?id=' + this.editForm.id);
+                        } else {
+                            this.$notify({
+                                title: '请求失败',
+                                message: res.errmsg,
+                                type: 'error',
+                                position: 'bottom-right'
+                            });
+                        }
+                    }.bind(this)
+                });
+            },
+            //保存
+            submitFormAdd: function () {
+                this.editForm.status = "2";
+                var that = this;
+                this.$refs['editForm'].validate(function (valid) {
+                    if (valid) {
+                        ajax({
+                            url: common.url_fanjx + "/putForward/saveAgencyClarify",
+                            type: "POST",
+                            data: JSON.stringify(that.editForm),
+                            contentType: "application/json;charset=utf-8",
+                            success: function (res) {
+                                if (res.code == 200) {
+                                    that.loading = false;
+                                    if (res.data == null) {
+                                        that.$notify({
+                                            title: '请求失败',
+                                            message: "没有数据",
+                                            type: 'error',
+                                            position: 'bottom-right'
+                                        });
+                                        return;
+                                    } else {
+                                        that.$notify({
+                                            title: '保存成功',
+                                            message: "保存成功",
+                                            type: 'success',
+                                            position: 'bottom-right'
+                                        });
+                                    }
+                                    that.editForm.id = res.data.id;
+                                } else {
+                                    that.$notify({
+                                        title: '请求失败',
+                                        message: res.errmsg,
+                                        type: 'error',
+                                        position: 'bottom-right'
+                                    });
+                                }
+                            }.bind(this)
+                        });
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+            },
+            //跳转到电子签章页面
+            signature: function () {
+                this.editForm.status = "2";
+                var that = this;
+                this.$refs['editForm'].validate(function (valid) {
+                    if (!valid) {
+                        return false;
+                    }
+                    //获取电子签章页面
+                    ajax({
+                        type: "POST",
+                        url: common.url_fanjx + "/putForward/generatePDF",
+                        contentType: "application/json;charset=utf-8",
+                        // dataType: "json",
+                        data: JSON.stringify(that.editForm),
+                        success: function (res) {
+                            console.log(res)
+                            if (res.code == 200) {
+                                //签名后返回的文件地址
+                                console.log("签章pdf名字：", res.data);
+                                that.editForm.id = res.data.id;
+                                xadmin.open('电子签章', "../pinggao_svsp/pages/supplier_service_platform/pdf_seal_view.html?signType=1&pdfRedisKey=" + encodeURIComponent(res.data.fileName));
+                            }
+                        }
+                    });
+                });
+            },
+            issueAgencyClarify: function (signPath) {
+                this.editForm.status = "3";
+                this.editForm.sign = signPath;
+                var that = this;
+                ajax({
+                    url: common.url_fanjx + "/putForward/issueAgencyClarify",
+                    type: "POST",
+                    data: JSON.stringify(that.editForm),
+                    contentType: "application/json;charset=utf-8",
+                    success: function (res) {
+                        if (res.code == 200) {
+                            that.loading = false;
+                            if (res.data == null) {
+                                that.$notify({
+                                    title: '请求失败',
+                                    message: "没有数据",
+                                    type: 'error',
+                                    position: 'bottom-right'
+                                });
+                                return;
+                            } else {
+                                that.$notify({
+                                    title: '发布成功',
+                                    message: "发布成功",
+                                    type: 'success',
+                                    position: 'bottom-right'
+                                });
+                                setTimeout(function () {
+                                    xadmin.del_tab();
+                                }, DEADTIME);
+                            }
+                            that.editForm.id = res.data.id;
+                        } else {
+                            that.$notify({
+                                title: '请求失败',
+                                message: res.errmsg,
+                                type: 'error',
+                                position: 'bottom-right'
+                            });
+                        }
+                    }.bind(this)
+                });
+            },
+            //取消
+            resetForm: function (formName) {
+                this.$refs[formName].resetFields();
+            }
+        },
+        watch: {}
+    }).$mount('#wrapper')
+</script>
+
+</html>

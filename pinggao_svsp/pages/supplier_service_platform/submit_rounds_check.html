@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>欢迎访问 国家电网公司招投标平台</title>
+  <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司" />
+  <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部" />
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" href="../../static/css/element_ui.css">
+  <link rel="stylesheet" href="../../static/css/common.css">
+
+</head>
+<style>
+  body {
+    background: #F2F2F2;
+  }
+
+  .check-box {
+    width: 500px;
+    padding: 0 44px 0 10px;
+  }
+
+  .check-title {
+    padding-left: 16px;
+    margin: 10px 0 20px;
+    color: #009988;
+    position: relative
+  }
+
+  .check-title .el-button {
+    margin-left: 16px;
+  }
+
+  .el-table {
+    min-height: 10vh
+  }
+
+  .tree-box-left {
+    width: 210px;
+    height: 100vh;
+    background: #fff;
+    margin-right: 14px;
+    flex-shrink: 0;
+  }
+
+  .table-box {
+    width: 100%;
+  }
+
+  .table-content {
+    margin-top: 0
+  }
+
+  .is-current .el-tree-node__label {
+    color: #009988
+  }
+
+  a {
+    text-decoration: none
+  }
+
+  .table-operation .el-checkbox {
+    float: right;
+    margin-right: 80px;
+    line-height: 36px
+  }
+</style>
+
+<body>
+  <div id="wrapper">
+    <div class="content-page flex">
+      <div class="tree-box-left">
+        <el-tree :data="data" ref="vuetree" :props="defaultProps" @node-click="handleNodeClick" node-key="id" :highlight-current="true"
+          default-expand-all="true"></el-tree>
+      </div>
+      <div class="table-box">
+        <div class="table-content">
+          <div class="table-operation">
+            <el-button @click="deleteDataAll(tableData)" type="primary" size="mini">&nbsp;撤回&nbsp;</el-button>
+            <el-checkbox @change="checkChange()" v-model="search.checked">文件递交不全</el-checkbox>
+          </div>
+          <el-table ref="table" v-loading="loading" :data="tableData" style="width: 100%" :header-cell-style="{background:'#EDFFFA'}"
+            border @selection-change="chooseData" :row-class-name="tableRowClassName" :height="tableHeight">
+            <el-table-column type="selection" width="40">
+            </el-table-column>
+            <el-table-column prop="date" label="分标" width="">
+            </el-table-column>
+            <el-table-column prop="name" label="分包">
+            </el-table-column>
+            <el-table-column prop="state" label="商务文件递交状态">
+            </el-table-column>
+            <el-table-column prop="name" label="技术文件递交状态">
+            </el-table-column>
+            <el-table-column prop="name" label="价格文件递交状态">
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-link type="primary" @click="deleteData(scope.$index,tableData)">撤回</el-link>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination background @current-change="handleCurrentChange" @size-change="handlePageSizeChange" layout="sizes,prev, pager, next, jumper,total"
+            :total="total" :page-sizes="[10, 20, 30, 40]" :page-size="pageSize">
+          </el-pagination>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="../../static/vue.min.js" charset="utf-8"></script>
+<script src="../../static/element_ui.js" charset="utf-8"></script>
+<script src="../../static/layui/layui.js" charset="utf-8"></script>
+<script src="../../static/js/xadmin.js" charset="utf-8"></script>
+<script src="../../static/axios.min.js" charset="utf-8"></script>
+<script src="../../static/js/common.js" charset="utf-8"></script>
+<script>
+  var vm = new Vue({
+    data: {
+      loading: false,
+      tableHeight: 500,
+      pageNum: "1",
+      pageSize: "10",
+      total: "",
+      search: {
+        type: '',
+        name: '',
+        checked: false
+      },
+      data: [{
+        id: 1,
+        label: '分标一',
+        children: [{
+            id: 2,
+            label: '分标1'
+          },
+          {
+            id: 3,
+            label: '分标2'
+          },
+          {
+            id: 4,
+            label: '分标3'
+          },
+          {
+            id: 5,
+            label: '分标4'
+          },
+        ]
+      }, {
+        id: 6,
+        label: '分标二',
+        children: [{
+            id: 7,
+            label: '分标5'
+          },
+          {
+            id: 8,
+            label: '分标6'
+          },
+          {
+            id: 9,
+            label: '分标7'
+          },
+          {
+            id: 10,
+            label: '分标8'
+          },
+        ]
+      }],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+      tableData: [{
+        tenderee: '国家电网湖北公司',
+        date: '2016-05-02',
+        name: '王小虎',
+        state: '成功'
+      }, {
+        tenderee: '国家电网湖南公司',
+        date: '2016-05-04',
+        name: '王小虎',
+        state: '失败'
+      }, {
+        tenderee: '国家电网上海公司',
+        date: '2016-05-01',
+        name: '王小虎',
+        state: '成功'
+      }, {
+        tenderee: '国家电网上海公司',
+        date: '2016-05-03',
+        name: '王小虎',
+        state: '失败'
+      }],
+    },
+    mounted: function () {
+      this.$nextTick(function () {
+        this.tableHeight = window.innerHeight - this.$refs.table.$el.offsetTop - 80;
+        this.$refs.vuetree.setCurrentKey(2); //设置默认树形控件第一个高亮
+      })
+    },
+    methods: {
+      search: function () {
+        this.loading = true;
+        // 搜索结束后加载中图标为false
+        setTimeout(function () {
+          vm.loading = false;
+        }, 500);
+      },
+      handleCurrentChange: function (pageNum) {
+        this.pageNum = pageNum
+        this.getData()
+      },
+      handlePageSizeChange: function (pageSize) {
+        this.pageSize = pageSize
+        this.getData()
+      },
+      handleNodeClick: function (data) {
+        //点击左侧菜单
+      },
+      checkChange: function (val) {
+        console.log(1);
+      },
+      deleteData: function (index, tableData) {
+        tableData.splice(index, 1)
+      },
+      tableRowClassName: function (scope, index) {
+        scope.row.index = scope.rowIndex
+      },
+      chooseData: function (val) {
+        val.forEach(function (val, index) {　　　　　
+          vm.tableData.forEach(function (v, i) {
+            if (val.index == v.index) {
+              v.dataDel = true
+            }
+          })
+        })
+      },
+      deleteDataAll: function (tableData) {
+        for (var i = 0; i < tableData.length; i++) {
+          if (tableData[i].dataDel) {
+            tableData.splice(i, 1)
+            i -= 1;
+          }
+        }
+      }
+
+
+    },
+  }).$mount('#wrapper')
+</script>
+
+</html>

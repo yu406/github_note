@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>欢迎访问 国家电网公司招投标平台</title>
+  <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司" />
+  <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部" />
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" href="../../static/css/element_ui.css">
+  <link rel="stylesheet" href="../../static/css/common.css">
+
+</head>
+<style>
+  body {
+    background: #F2F2F2;
+  }
+
+  .table-box {
+    width: 100%;
+  }
+
+  .el-table .warning-row {
+    background: #F0F9F8;
+  }
+</style>
+
+<body>
+  <div id="wrapper">
+    <div class="content-page">
+      <div class="table-box">
+        <div class="table-header-box clearfix">
+          <el-form :inline="true" class="demo-form-inline">
+            <el-form-item>
+              <el-input v-model="search_obj.code" placeholder="项目编码"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-input v-model="search_obj.name" placeholder="项目名称"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-form-item>
+                <el-select v-model="search_obj.purchaseStatus" clearable placeholder="项目状态">
+                  <el-option v-for="item in purchaseStatusList" :label="item.detailName" :value="item.detailCode">
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" @click="search()">查询</el-button>
+              <el-button @click="search_obj={}">重置</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+        <div class="table-content">
+          <div class="table-operation">
+          </div>
+          <div class="el-table-box">
+            <el-table v-loading="loading" :data="tableData" style="width: 100%" :row-class-name="tableRowClassName" :height="tableHeight">
+              <el-table-column type="index" width="44">
+              </el-table-column>
+              <el-table-column prop="purchaseStatusName" label="项目状态" min-width="140">
+              </el-table-column>
+              <el-table-column prop="code" label="项目编号" min-width="140">
+              </el-table-column>
+              <el-table-column label="项目名称" min-width="300">
+                <template slot-scope="scope">
+                  <el-link type="primary" @click="parent.xadmin.add_tab('公告查看','../../pages/supplier_service_platform/invitation_for_bid_check.html')">
+                    {{scope.row.name}}
+                  </el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="creationDate" label="创建时间" min-width="120">
+              </el-table-column>
+              <el-table-column label="操作" min-width="120">
+                <template slot-scope="scope">
+                  <el-link @click="toCheck(scope.row)" type="primary">查看</el-link>
+                  <el-link type="primary" @click="toPresentClarify(scope.row)">提出澄清</el-link>
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          <el-pagination background @current-change="handleCurrentChange" @size-change="handleSizeChange" layout="sizes,prev, pager, next, jumper,total"
+            :total="total" :page-sizes="[10, 20, 30, 40]" :page-size="pageSize">
+          </el-pagination>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</body>
+<script src="../../static/vue.min.js" charset="utf-8"></script>
+<script src="../../static/element_ui.js" charset="utf-8"></script>
+<script src="../../static/layui/layui.js" charset="utf-8"></script>
+<script src="../../static/js/xadmin.js" charset="utf-8"></script>
+<script src="../../static/myAjax.js" charset="utf-8"></script>
+<script src="../../static/js/common.js" charset="utf-8"></script>
+<script>
+  var vm = new Vue({
+    data: {
+      loading: false,
+      tableHeight: parent.innerHeight - 340,
+      search_obj: {
+        code: '',
+        name: '',
+        purchaseStatus: ""
+      },
+      purchaseStatusList: [],
+      pageSize: 10,
+      pageNum: 1,
+      total: 0,
+      tableData: [],
+    },
+    mounted: function () {
+      this.getpurchaseStatusList();
+      this.getData();
+    },
+    methods: {
+      //获取项目状态下拉框
+      getpurchaseStatusList: function () {
+        ajax({
+          url: common.url_fanjx + "/putForward/getDropDownBoxList?name=PJ_PROJECT_PURCHASE_STATUS",
+          type: "GET",
+          contentType: "application/json;charset=utf-8",
+          success: function (res) {
+            if (res.code == "200") {
+              this.purchaseStatusList = res.data;
+            } else {
+              this.$notify({
+                title: '请求失败',
+                message: res.errmsg,
+                type: 'error',
+                position: 'bottom-right'
+              });
+            }
+          }.bind(this)
+        });
+      },
+      //渲染列表
+      getData: function () {
+        var data = {
+          page: this.pageNum,
+          pageSize: this.pageSize,
+          code: this.search_obj.code,
+          name: this.search_obj.name,
+          purchaseStatus: this.search_obj.purchaseStatus
+        }
+        ajax({
+          url: common.url_fanjx + "/putForward/pageListQueryProjectDTOByProject",
+          type: "POST",
+          data: JSON.stringify(data),
+          contentType: "application/json;charset=utf-8",
+          success: function (res) {
+            if (res.code == 200) {
+              this.loading = false;
+              if (res.data == null) {
+                this.$notify({
+                  title: '请求失败',
+                  message: "没有数据",
+                  type: 'error',
+                  position: 'bottom-right'
+                });
+                return;
+              }
+              this.tableData = res.data.list;
+              this.total = res.data.total;
+            } else {
+              this.$notify({
+                title: '请求失败',
+                message: res.errmsg,
+                type: 'error',
+                position: 'bottom-right'
+              });
+            }
+          }.bind(this)
+        });
+      },
+      //条件查询
+      search: function () {
+        this.pageNum = 1;
+        this.$emit('on-search-change', this.getData());
+      },
+      //清空搜索条件
+      closeClear: function () {
+        this.search_obj.code = '';
+        this.search_obj.name = '';
+        this.search_obj.purchaseStatus = '';
+      },
+      //列表分页码数
+      handleCurrentChange: function (val) {
+        this.pageNum = val;
+        this.getData();
+      },
+      //列表分页条数
+      handleSizeChange: function (val) {
+        this.pageSize = val;
+        this.pageNum = 1;
+        this.getData();
+      },
+      //查看
+      toCheck: function (row) {
+        parent.xadmin.add_tab('查看',
+          '../pinggao_svsp/pages/supplier_service_platform/platform_clarify_management.html?projectId=' + row.id +
+          '&projectName=' + row.name);
+      },
+      //提出澄清
+      toPresentClarify: function (row) {
+        parent.xadmin.add_tab('提出澄清',
+          '../pinggao_svsp/pages/supplier_service_platform/platform_present_clarify.html?projectId=' + row.id +
+          '&projectName=' + row.name);
+      },
+      tableRowClassName: function (scope) {
+        if (scope.rowIndex % 2 === 0) {
+          return 'warning-row';
+        }
+        return '';
+      },
+
+
+    },
+  }).$mount('#wrapper')
+</script>
+
+</html>

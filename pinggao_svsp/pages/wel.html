@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>欢迎页面-WeAdmin Frame型后台管理系统-WeAdmin 1.0</title>
+  <meta name="renderer" content="webkit">
+  <!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="stylesheet" href="../static/css/font.css">
+  <link rel="stylesheet" href="../static/css/common.css">
+  <link rel="stylesheet" href="../static/css/wel.css">
+</head>
+
+<body>
+  <div class="wel-box clearfix" id="wrapper">
+    <!--<div class="wel-box-item">
+      <div class="wel-box-item-title">我的待办</div>
+      <div class="wel-box-item-content">
+        <ul class="clearfix" v-for="item in backlog">
+          <li>{{item.title}}</li>
+          <li></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wel-box-item">
+      <div class="wel-box-item-title">评标进度</div>
+      <div class="wel-box-item-content">
+        <ul class="clearfix" :class="{ hundred: item.percent=='100%' }" v-for="item in backlog">
+          <li>{{item.title}}</li>
+          <li>{{item.percent}}</li>
+        </ul>
+      </div>
+    </div>-->
+    <div class="wel-box-item max">
+      <div class="wel-box-item-title">快捷入口</div>
+      <div class="shortcut-box clearfix">
+        <div class="shortcut-item float" @click="parent.xadmin.add_tab('提出澄清','../pages/issue_management/present_clarify.html')">
+          <div class="shortcut-icon">
+            <img src="../static/images/icon/chengqing.png" alt="">
+          </div>
+          <span>填写澄清单</span>
+        </div>
+        <div class="shortcut-item float" @click="parent.xadmin.add_tab('提出澄清','../pages/issue_management/present_clarify.html')">
+          <div class="shortcut-icon">
+            <img src="../static/images/icon/shanchufoujue.png" alt="">
+          </div>
+          <span>填写否决单</span>
+        </div>
+        <div class="shortcut-item float" @click="parent.xadmin.add_tab('提出澄清','../pages/issue_management/present_clarify.html')"
+        >
+          <div class="shortcut-icon">
+            <img src="../static/images/icon/edit-price.png" alt="">
+          </div>
+          <span>填写价格修正</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="../static/vue.min.js" charset="utf-8"></script>
+<script src="../static/layui/layui.js" charset="utf-8"></script>
+<script src="../static/js/xadmin.js" charset="utf-8"></script>
+<script>
+  var vm = new Vue({
+    data: {
+      backlog: [{
+          title: '待审核：张三_20190909_澄清_2019市政服务建设项目_分标1_分包1 待审核：张三_20190909_澄清_2019市政服务建设项目_分标1_分包1',
+          percent: '90%'
+        },
+        {
+          title: '待审核：张三_20190909_否决_2019市政服务建设项目_分标1_分包1',
+          percent: '90%'
+        },
+        {
+          title: '待审核：张三_20190909_价格修正_2019市政服务建设项目_分标1_分包1',
+          percent: '80%'
+        },
+        {
+          title: '待审核：张三_20190909_变更公告_2019市政服务建设项目_分标1_分包1',
+          percent: '70%'
+        },
+        {
+          title: '待审核：张三_20190909_授标_2019市政服务建设项目_分标1',
+          percent: '60%'
+        },
+        {
+          title: '待审核：张三_20190909_定标_2019市政服务建设项目_分标1',
+          percent: '100%'
+        },
+        {
+          title: '待审核：张三_20190909_否决_2019市政服务建设项目_分标1_分包1',
+          percent: '100%'
+        },
+        {
+          title: '待审核：张三_20190909_价格修正_2019市政服务建设项目_分标1_分包1',
+          percent: '100%'
+        },
+        {
+          title: '待审核：张三_20190909_变更公告_2019市政服务建设项目_分标1_分包1',
+          percent: '100%'
+        },
+        {
+          title: '待审核：张三_20190909_授标_2019市政服务建设项目_分标1'
+        },
+        {
+          title: '待审核：张三_20190909_定标_2019市政服务建设项目_分标1'
+        }
+      ]
+    },
+    created: function () {
+
+    },
+    methods: {
+      deleteShow: function (val) {
+        this.$alert('确认解除关联的模板？', '解除关联', {
+          confirmButtonText: '确认',
+          type: 'warning',
+          callback: function (action) {
+            if (action == 'confirm') {
+              console.log('确认');
+            } else {
+              console.log('取消');
+            }
+          }.bind(this)
+        })
+      }
+    },
+    filters: {
+      ellipsis: function (value) {
+        if (!value) return ''
+        if (value.length > 32) {
+          return value.slice(0, 32) + '...'
+        }
+        return value
+      }
+    },
+  }).$mount('#wrapper')
+</script>
+
+</html>

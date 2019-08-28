@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="cn">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>欢迎访问 国家电网公司招投标平台</title>
+  <meta name="Keywords" content="电子商务平台, 招投标平台, 供应商, 物流, 合同, 物资部, 国家电网公司" />
+  <meta name="description" content="国家电网公司电子商务平台，国家电网公司招投标平台，国家电网公司物资部" />
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" href="../../static/css/element_ui.css">
+  <link rel="stylesheet" href="../../static/css/common.css">
+
+</head>
+<style>
+  body {
+    background: #fff;
+    padding: 0 20px 0;
+  }
+
+  .check-box {
+    position: relative;
+  }
+
+  .check-title {
+    padding-left: 16px;
+    margin: 10px 0 20px;
+    color: #009988
+  }
+
+  .check-title::before {
+    content: '';
+    left: 0px;
+    top: 0px;
+    display: block;
+    width: 4px;
+    height: 20px;
+    background: #009988;
+    position: absolute;
+  }
+
+  .check-content li dl {
+    float: left;
+    height: 54px;
+    line-height: 30px
+  }
+
+  .check-content li dl:first-child {
+    width: 124px;
+    text-align: right;
+    padding-right: 18px;
+    color: #777
+  }
+
+  .check-content li dl:last-child {
+    width: 270px;
+  }
+
+  .check-content li dl.tree {
+    height: 100%;
+    padding-top: 2px
+  }
+
+  .el-tree {
+    min-height: 78vh;
+  }
+
+  ul.submit-btn {
+    padding-left: 326px;
+    line-height: 66px;
+    height: 76px;
+    width: 100%;
+    background: #fff;
+    position: fixed;
+    bottom: 0px;
+    left: 0;
+    border-top: 1px solid #e4e4e4;
+  }
+
+  .dialog-form .el-input {
+    width: 240px;
+  }
+</style>
+
+<body>
+  <div id="wrapper">
+    <div class="content-page">
+      <div class="check-box">
+        <div class="check-title">申请下载招标文件</div>
+        <div class="check-content">
+          <ul class="clearfix">
+            <li class="float">
+              <dl class="tree">
+                <el-tree :data="computeData" ref="vuetree" :props="defaultProps" show-checkbox node-key="id" default-expand-all></el-tree>
+              </dl>
+            </li>
+          </ul>
+          <ul class="submit-btn">
+            <el-button @click="apply_for_download()" type="primary">申请下载</el-button>
+            <el-button @click="xadmin.del_tab()" size="medium">取 消</el-button>
+          </ul>
+        </div>
+      </div>
+      <el-dialog title="审核" :visible.sync="dialogEdit" width="430px" :close-on-click-modal="false">
+        <el-form :model="editForm" :rules="rules" ref="editForm" label-width="94px" class="dialog-form">
+          <el-form-item label="联系人" prop="linkman">
+            <el-input v-model="editForm.linkman"></el-input>
+          </el-form-item>
+          <el-form-item label="联系电话" prop="phone">
+            <el-input v-model="editForm.phone"></el-input>
+          </el-form-item>
+        </el-form>
+        <span slot="footer" class="dialog-footer">
+       <el-button type="primary" @click="submitFormAdd('editForm')">确 定</el-button>
+      <el-button @click="dialogEdit = false;closeDialog('editForm')">取 消</el-button>
+  </span>
+      </el-dialog>
+
+    </div>
+  </div>
+  </div>
+</body>
+<script src="../../static/vue.min.js" charset="utf-8"></script>
+<script src="../../static/element_ui.js" charset="utf-8"></script>
+<script src="../../static/layui/layui.js" charset="utf-8"></script>
+<script src="../../static/js/xadmin.js" charset="utf-8"></script>
+<script src="../../static/axios.min.js" charset="utf-8"></script>
+<script src="../../static/js/common.js" charset="utf-8"></script>
+<script src="../../static/js/pdf.min.js" charset="utf-8"></script>
+<script src="https://cdn.bootcss.com/pdfobject/2.1.1/pdfobject.min.js"></script>
+<script src="../../static/js/html2canvas.min.js" charset="utf-8"></script>
+<script>
+  var vm = new Vue({
+    data: {
+      dialogEdit: false,
+      form: {
+        type: ''
+      },
+      editForm: [],
+      rules: {
+          linkman: [{
+          required: true,
+          message: '请输入联系人',
+          trigger: 'blur'
+        }],
+        phone: [{
+          required: true,
+          message: '请输入联系电话',
+          trigger: 'blur'
+        }]
+      },
+      data: [],
+      defaultProps: {
+        children: 'subpackageDTOS',
+        label: 'name'
+      }
+    },
+    created: function () {
+      this.getTreeData()
+    },
+    computed: {
+      computeData: function () {
+        for (var i = 0; i < this.data.length; i++) {
+          if (this.data[i].subpackageDTOS.length < 1) {
+            this.data.splice(i, 1);
+          }
+        }
+        return this.data
+      }
+    },
+    methods: {
+      getTreeData: function (active, id) {
+        axios.get("http://192.168.2.88:8081/check-service/formula/queryListTree?projectId=1").then(
+          function (res) {
+            var res = res.data
+            if (res.code == "200") {
+              if (res.data == undefined || res.data <= 0) {
+                vm.$notify({
+                  title: '请求失败',
+                  message: "该项目没有分标包",
+                  type: 'error',
+                  position: 'bottom-right'
+                });
+                return;
+              };
+              this.data = res.data.minuteMarkDTOS
+              console.log(this.data);
+              this.$nextTick(function () {
+                // this.$refs.vuetree.setCurrentKey(this.data[0].children[0].children[0].id); //设置默认树形控件第一个高亮
+              });
+            } else {
+              vm.$notify({
+                title: '请求失败',
+                message: "服务器繁忙,请稍后重试!",
+                type: 'error',
+                position: 'bottom-right'
+              });
+            }
+          }.bind(this))
+      },
+        //确认弹出框
+      apply_for_download: function () {
+          var list = vm.$refs.vuetree.getCheckedNodes(true, false)
+          if (undefined==list || list.length <= 0) {
+              vm.$notify({
+                  title: '请求失败',
+                  message: "请至少选择一个分包",
+                  type: 'error',
+                  position: 'bottom-right'
+              });
+              return;
+          };
+          axios.post("http://192.168.2.88:8081/check-service/formula/haveApplyBiddingDocument",list).then(
+              function (res) {
+                  var res = res.data
+                  if (res.code == "200") {
+                      if (undefined ==res.data || res.data.length===0) {
+                          this.dialogEdit = true;
+                      }else{
+                          vm.$notify({
+                              title: res.data[0].name+'已申请下载,不可从复下载',
+                              message: res.data[0].name+'已申请下载,不可从复下载',
+                              type: 'error',
+                              position: 'bottom-right'
+                          });
+                      }
+
+                  }
+              }.bind(this))
+
+      },
+      resetDialog: function (formName) {
+        this.$refs[formName].resetFields();
+      },
+      submitFormAdd: function (formName) {
+        this.$refs[formName].validate(function (valid, e) {
+          if (valid) {
+              var list = vm.$refs.vuetree.getCheckedNodes(true, false)
+
+              if (undefined==list || list.length <= 0) {
+                  vm.$notify({
+                      title: '请求失败',
+                      message: "请至少选择一个分包",
+                      type: 'error',
+                      position: 'bottom-right'
+                  });
+                  return;
+              };
+              for(var i=0;i<list.length;i++){
+                 list[i].linkman=vm.editForm.linkman
+                 list[i].phone=vm.editForm.phone
+              }
+              axios.post("http://192.168.2.88:8081/check-service/formula/applyBiddingDocument",list).then(
+                  function (res) {
+                      var res = res.data
+                      if (res.code == "200") {
+                          if (res.data == undefined || res.data <= 0) {
+                              vm.$notify({
+                                  title: '申请成功',
+                                  message: '申请成功',
+                                  type: 'success',
+                                  position: 'bottom-right'
+                              });
+                              setTimeout(function () {
+                                  parent.xadmin.add_tab('申请管理列表',
+                                      '../pinggao_svsp/pages/supplier_service_platform/application_management.html')
+                              }, 500);
+
+                          };
+
+                      } else {
+                          vm.$notify({
+                              title: '请求失败',
+                              message: "服务器繁忙,请稍后重试!",
+                              type: 'error',
+                              position: 'bottom-right'
+                          });
+                      }
+                  }.bind(this))
+
+
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      handleEdit: function () {
+
+      },
+      handleDelete: function () {
+
+      },
+      handleCheck: function (index, val) {
+        // console.log(val);
+      },
+
+    },
+  }).$mount('#wrapper')
+</script>
+
+</html>
